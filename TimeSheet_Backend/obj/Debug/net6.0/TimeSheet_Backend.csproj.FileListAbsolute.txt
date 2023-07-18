@@ -85,3 +85,7 @@ D:\project\TimeSheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\refint\TimeSheet
 D:\project\TimeSheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\TimeSheet_Backend.pdb
 D:\project\TimeSheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\TimeSheet_Backend.genruntimeconfig.cache
 D:\project\TimeSheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\ref\TimeSheet_Backend.dll
+D:\project\TimeSheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\System.Net.Http.Formatting.dll
+D:\project\TimeSheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\System.Web.Http.dll
+D:\project\TimeSheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\Newtonsoft.Json.dll
+D:\project\TimeSheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll

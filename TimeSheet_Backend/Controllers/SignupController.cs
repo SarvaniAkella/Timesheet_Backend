@@ -1,79 +1,135 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TimeSheet_Backend.Models;
 
-namespace TimeSheet_Backend.Controllers
+[ApiController]
+//[Route("api/signup")]
+public class SignupController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SignupController : ControllerBase
+    private readonly SignupContext _context;
+
+    public SignupController(SignupContext context)
     {
-        private readonly SignupContext _dbContext;
-        public SignupController(SignupContext dbContext)
+        _context = context;
+    }
+
+    [HttpPost("signup")]
+    public IActionResult Signup([FromBody] SignupRequest request)
+    {
+        if (!ModelState.IsValid)
         {
-            _dbContext = dbContext;
+            return BadRequest(ModelState);
         }
 
-        [HttpPost("signup")]
-        public async Task<IActionResult> SignUp(Signup request)
+        switch (request.UserType)
         {
-            if (await _dbContext.Signups.AnyAsync(u => u.Email == request.Email))
-            {
-                return BadRequest("Email already exists");
-            }
+            case UserType.User:
+                _context.Users.Add(new UserSignup
+                {
 
-            var newUser = new Signup
-            {
-                Username = request.Username,
-                Email = request.Email,
-                Password = request.Password,
-                Mobileno = request.Mobileno
-                // You can add more properties here as needed
-            };
+                    Username = request.Username,
+                    Password = request.Password,
+                    Email = request.Email,
+                    Mobileno = request.Mobileno
 
-            _dbContext.Signups.Add(newUser);
-            await _dbContext.SaveChangesAsync();
+                }); 
+                break;
 
-            return Ok("User created successfully");
+            case UserType.Admin:
+                _context.Admins.Add(new AdminSignup
+                {
+                    Username = request.Username,
+                    Password = request.Password,
+                    Email = request.Email,
+                    Mobileno = request.Mobileno
+                });
+                break;
+
+            case UserType.HR:
+                _context.HRs.Add(new HrSignup
+                {
+                    Username = request.Username,
+                    Password = request.Password,
+                    Email = request.Email,
+                    Mobileno = request.Mobileno
+                });
+                break;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(Login request)
+        _context.SaveChanges();
+
+        return Ok();
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginRequest request)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var admin= await _context.Admins.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var hr = await _context.HRs.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+
+        switch (request.UserType)
         {
-            var user = await _dbContext.Signups.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            if (user.Password != request.Password)
-            {
-                return BadRequest("Invalid password");
-            }
-
-            // Generate and return a JWT token or any other authentication response here
+            case UserType.User:
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
 
 
-            return Ok("User login successfull");
+
+                if (user.Password != request.Password)
+                {
+                    return BadRequest("Invalid password");
+                }
+                
+
+                break;
+
+            case UserType.Admin:
+                if (admin == null)
+                {
+                    return NotFound("User not found");
+                }
+
+
+
+                if (admin.Password != request.Password)
+                {
+                    return BadRequest("Invalid password");
+                }
+
+                break;
+
+            case UserType.HR:
+      
+                if (hr == null)
+                {
+                    return NotFound("User not found");
+                }
+
+
+
+                if (hr.Password != request.Password)
+                {
+                    return BadRequest("Invalid password");
+                }
+
+                break;
         }
 
-        [HttpGet("{email}")]
-        public async Task<IActionResult> GetUserByEmail(string email)
-        {
-            var user = await _dbContext.Signups.FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
 
-            // Return the user information
-            return Ok(user);
-        }
 
-        // This is just a placeholder method, you should replace it with your actual token generation logic
+     
 
+
+        // Generate and return a JWT token or any other authentication response here
+
+
+
+
+        return Ok("User login successfull");
     }
 }
