@@ -75,7 +75,31 @@ namespace TimeSheet_Backend.Controllers
             return Ok();
           
         }
-       
+
+        [HttpGet("readdata")]
+        public async Task<ActionResult<UserActivity>> ReadData(DateTime date)
+        {
+
+            if(_context.UserActivities == null)
+            {
+                return NotFound();
+            }
+            var userActivities = await _context.UserActivities
+                     .Where(activity => activity.DateOnly.Date == date.Date) // Filter by the date part only
+                     .ToListAsync();
+            if(userActivities.Count <= 0) 
+            {
+                return NotFound();
+            }
+
+            // Do something with the userActivities
+            // ...
+
+            return Ok(userActivities);
+          
+        }
+
+
 
 
 
