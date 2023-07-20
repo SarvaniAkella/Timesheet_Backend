@@ -31,7 +31,8 @@ namespace TimeSheet_Backend.Controllers
                 Activity = request.Activity,
                 Task = request.Task,
                 Hours = request.Hours,
-                DateOnly = request.DateOnly
+                DateOnly = request.DateOnly,
+                Email = request.Email
                 // You can add more properties here as needed
             };
 
@@ -46,18 +47,22 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id,string email)
         {
             if (_context.UserActivities == null)
             {
                 return NotFound();
             }
-            var user = await _context.UserActivities.FindAsync(id);
-            if (user == null)
+       //     var user = await _context.UserActivities.FindAsync(id);
+
+            var userActivities = await _context.UserActivities
+           .Where(activity =>  (activity.Email == email)) // Filter by the date part only
+            .ToListAsync();
+            if (userActivities.Count() <= 0)
             {
                 return NotFound();
             }
-            _context.UserActivities.Remove(user);
+            _context.UserActivities.Remove(userActivities[id]);
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -77,7 +82,7 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpGet("readdata")]
-        public async Task<ActionResult<UserActivity>> ReadData(DateTime date)
+        public async Task<ActionResult<UserActivity>> ReadData(string email,DateTime date)
         {
 
             if(_context.UserActivities == null)
@@ -85,15 +90,14 @@ namespace TimeSheet_Backend.Controllers
                 return NotFound();
             }
             var userActivities = await _context.UserActivities
-                     .Where(activity => activity.DateOnly.Date == date.Date) // Filter by the date part only
+                     .Where(activity => (activity.DateOnly.Date == date.Date) && (activity.Email == email )) // Filter by the date part only
                      .ToListAsync();
             if(userActivities.Count <= 0) 
             {
                 return NotFound();
             }
 
-            // Do something with the userActivities
-            // ...
+           
 
             return Ok(userActivities);
           

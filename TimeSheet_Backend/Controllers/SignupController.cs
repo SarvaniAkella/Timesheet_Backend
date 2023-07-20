@@ -30,7 +30,8 @@ public class SignupController : ControllerBase
                     Username = request.Username,
                     Password = request.Password,
                     Email = request.Email,
-                    Mobileno = request.Mobileno
+                    Mobileno = request.Mobileno,
+
 
                 }); 
                 break;
@@ -41,7 +42,8 @@ public class SignupController : ControllerBase
                     Username = request.Username,
                     Password = request.Password,
                     Email = request.Email,
-                    Mobileno = request.Mobileno
+                    Mobileno = request.Mobileno,
+                    
                 });
                 break;
 
@@ -51,7 +53,7 @@ public class SignupController : ControllerBase
                     Username = request.Username,
                     Password = request.Password,
                     Email = request.Email,
-                    Mobileno = request.Mobileno
+                    Mobileno = request.Mobileno,
                 });
                 break;
         }
@@ -118,14 +120,6 @@ public class SignupController : ControllerBase
 
                 break;
         }
-
-
-
-
-     
-
-
-        // Generate and return a JWT token or any other authentication response here
 
 
 

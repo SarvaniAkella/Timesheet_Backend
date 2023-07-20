@@ -6,6 +6,8 @@ namespace TimeSheet_Backend.Models
     public class UserActivity
     {
         public int Id { get; set; }
+
+        public string Email { get; set; }
         public string ProjectName { get; set; }
         public string Activity { get; set; }
         public string Task { get; set; }

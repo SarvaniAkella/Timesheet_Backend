@@ -11,5 +11,7 @@ namespace TimeSheet_Backend.Models
         public string? Email { get; set; }
         public string? Password { get; set; }
         public string Mobileno { get; set; }
+
+        
     }
 }

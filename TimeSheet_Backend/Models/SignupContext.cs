@@ -14,5 +14,10 @@ namespace TimeSheet_Backend.Models
         public DbSet<HrSignup> HRs { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
 
+        public DbSet<ProjectName> Projectnames { get; set; }
+
+        public DbSet<Activities> Activities { get; set; }
+        public DbSet<TaskTable> Tasks { get; set; }
+
     }
 }

@@ -12,8 +12,8 @@ using TimeSheet_Backend.Models;
 namespace TimeSheet_Backend.Migrations
 {
     [DbContext(typeof(SignupContext))]
-    [Migration("20230718085321_second")]
-    partial class second
+    [Migration("20230720110346_h")]
+    partial class h
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,22 @@ namespace TimeSheet_Backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.Activities", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("activity")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Activities");
+                });
 
             modelBuilder.Entity("TimeSheet_Backend.Models.AdminSignup", b =>
                 {
@@ -79,6 +95,67 @@ namespace TimeSheet_Backend.Migrations
                     b.ToTable("HRs");
                 });
 
+            modelBuilder.Entity("TimeSheet_Backend.Models.ProjectName", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("projectname")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projectnames");
+                });
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.TaskTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Activityname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Projectname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("activityid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("hours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("projectnameid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("task")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tasks");
+                });
+
             modelBuilder.Entity("TimeSheet_Backend.Models.UserActivity", b =>
                 {
                     b.Property<int>("Id")
@@ -94,9 +171,12 @@ namespace TimeSheet_Backend.Migrations
                     b.Property<DateTime>("DateOnly")
                         .HasColumnType("date");
 
-                    b.Property<string>("Hours")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Hours")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
