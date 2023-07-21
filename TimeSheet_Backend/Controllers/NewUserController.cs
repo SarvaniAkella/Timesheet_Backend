@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
@@ -18,57 +19,86 @@ namespace TimeSheet_Backend.Controllers
         }
         [HttpGet("GetAllProjects")]
 
-        public ActionResult<IEnumerable<string>> GetProjectNames()
+        public IActionResult GetAllProjects()
         {
-            var projectNames = Enum.GetNames(typeof(projectname));
+            // Fetch all projects from the database
+            List<Project> projects = _context.Projects.ToList();
+
+            // Extract only the project names and return them in the response
+            List<string> projectNames = projects.Select(p => p.ProjectName).ToList();
+
             return Ok(projectNames);
         }
         [HttpGet("GetAllActivities")]
 
-        public ActionResult<IEnumerable<string>> GetActivities()
+        public IActionResult GetAllActivities()
         {
-            var activitynames = Enum.GetNames(typeof(activities));
-            return Ok(activitynames);
-        }
-        [HttpPost("add")]
-        public async Task<IActionResult> CreateProject([FromBody] TaskTable taskTable)
-        {
-            // Set the ProjectName enum ID in the TaskTable based on the provided Projectname string
-            if (!Enum.TryParse(taskTable.Activityname, out activities activityNameEnum))
-            {
-                return BadRequest("Invalid ActivityName.");
-            }
-            if (!Enum.TryParse(taskTable.Projectname, out projectname projectNameEnum))
-            {
-                return BadRequest("Invalid ProjectName.");
-            }
+            // Fetch all projects from the database
+            List<Activity> activities = _context.Activities.ToList();
 
-            taskTable.activityid = activityNameEnum;
-            taskTable.projectnameid = projectNameEnum;
-            // Add the TaskTable to the context and save changes
-            _context.Tasks.Add(taskTable);
+            // Extract only the project names and return them in the response
+            List<string> projectNames = activities.Select(p => p.ActivityName).ToList();
+
+            return Ok(projectNames);
+        }
+        [HttpPost("save")]
+        public async Task<IActionResult> SaveUser(int userid ,TimeSheet request)
+             
+        {
+            /* var userActivities = await _context.Users
+                      .Where(activity => (activity.Email == email))
+                      .ToListAsync();// Filter by the date part only*/
+          
+            var newActivity = new TimeSheet
+            {
+                ProjectId = request.ProjectId,
+                ActivityId = request.ActivityId,
+                task = request.task,
+                hours = request.hours,
+                CreatedDate = request.CreatedDate,
+                
+                UserId = userid
+
+                // You can add more properties here as needed
+            };
+
+
+            _context.TimeSheets.Add(newActivity);
             await _context.SaveChangesAsync();
+          
 
-            return Ok("TaskTable added successfully");
+
+
+            return Ok("Activity added successfully");
         }
+
         [HttpPut("EditTask")]
-        public async Task<IActionResult> Edit(int id, TaskTable tasks)
+        public async Task<IActionResult> Edit(int userid, int index,TimeSheet model)
         {
-            if (id != tasks.Id)
+            var user = await _context.Users.FindAsync(userid);
+            if (user == null)
             {
-                return BadRequest();
+                return NotFound("User not found.");
             }
-            _context.Entry(tasks).State = EntityState.Modified;
+
+            var timesheet = await _context.TimeSheets
+                     .Where(t => t.UserId==userid)
+                     .ToListAsync();
+            timesheet[index].ProjectId = model.ProjectId;
+            timesheet[index].ActivityId = model.ActivityId;
+            timesheet[index].task = model.task;
+            timesheet[index].hours = model.hours;
+            timesheet[index].CreatedDate = model.CreatedDate;
 
             await _context.SaveChangesAsync();
             return Ok();
 
         }
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteRecord(int id, string user)
+        public async Task<IActionResult> DeleteRecord(int userid,int index)
         {
             // Find the record by ID and email
-            var record = await _context.Tasks.SingleOrDefaultAsync(r => r.Id == id && r.UserName == user);
+            var record = await _context.TimeSheets.Where(r => r.UserId == userid).ToListAsync();
 
             if (record == null)
             {
@@ -76,33 +106,74 @@ namespace TimeSheet_Backend.Controllers
             }
 
             // Remove the record from the context
-            _context.Tasks.Remove(record);
+            _context.TimeSheets.Remove(record[index]);
             await _context.SaveChangesAsync();
 
             return Ok("Record deleted successfully.");
         }
 
-        [HttpGet("UserData")]
-        public async Task<ActionResult<UserActivity>> ReadData(string email)
+        [HttpGet("GetUserData")]
+        public async Task<ActionResult<TimeSheet>> ReadData(int userid)
         {
 
-            if (_context.Tasks == null)
+            if (_context.TimeSheets == null)
             {
                 return NotFound();
             }
-            var userActivities = await _context.Tasks
-                     .Where(activity =>  (activity.email == email)) // Filter by the date part only
+            var userRecords = await _context.TimeSheets
+                     .Where(r =>  (r.UserId == userid)) // Filter by the date part only
                      .ToListAsync();
-            if (userActivities.Count <= 0)
+            if (userRecords.Count <= 0)
             {
                 return NotFound();
             }
 
 
 
-            return Ok(userActivities);
+            return Ok(userRecords);
 
         }
+        [HttpGet("GetUserDataByDate")]
+        public async Task<ActionResult<TimeSheet>> GetDataByDate(int userid, DateTime date)
+        {
+
+            if (_context.TimeSheets == null)
+            {
+                return NotFound();
+            }
+            var userRecords = await _context.TimeSheets
+                     .Where(r => (r.UserId == userid) && (r.CreatedDate.Date == date.Date) )// Filter by the date part only
+                     .ToListAsync();
+            if (userRecords.Count <= 0)
+            {
+                return NotFound();
+            }
+
+
+
+            return Ok(userRecords);
+
+        }
+
+
+        [HttpGet("GetUserDataForWeek")]
+        public IActionResult GetTimesheetsForOneWeek(int userid, [FromQuery] DateTime startDate)
+        {
+            // Calculate the end date as one week from the start date
+            DateTime endDate = startDate.AddDays(7);
+
+            // Fetch timesheet records for the specified user and within the date range
+            List<TimeSheet> timesheets = _context.TimeSheets
+                .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date < endDate.Date && t.UserId==userid)
+                .ToList();
+
+            return Ok(timesheets);
+        }
+
+
+
+
+
 
 
     }

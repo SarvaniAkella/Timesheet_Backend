@@ -1,12 +1,14 @@
 ﻿namespace TimeSheet_Backend.Models
 {
-    public class ProjectName
+    public class Project
     {
-        public int Id { get; set; } 
-        public projectname projectname { get; set; }
+        public int ProjectId { get; set; } 
+        public string  ProjectName { get; set; }
+
+        //public List<TimeSheet> TimeSheets { get; set; }
     }
 
-    public enum projectname
+   /* public enum projectname
     {
         PersonaNutrition=1,
         Puritains,
@@ -17,5 +19,5 @@
         ExternalPOC,
         MarketingandSales
 
-    }
+    }*/
 }
