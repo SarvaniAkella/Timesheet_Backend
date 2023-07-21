@@ -24,18 +24,8 @@ namespace TimeSheet_Backend.Controllers
             return Ok(users);
         }
 
-
-        [HttpGet("GetAllUserRecords")]
-
-        public async Task<IActionResult> GetAllRecords()
-        {
-            // Fetch all projects from the database
-            List<TimeSheet> users = await _context.TimeSheets.ToListAsync();
-            return Ok(users);
-        }
-
-        [HttpGet("GetRecordsByEmail")]
-        public async Task<ActionResult<List<TimeSheet>>> ReadData(string email)
+        [HttpGet("GetAllUserRecordsByemail")]
+        public async Task<ActionResult<List<object>>> GetAllUserRecordsByEmail(string email)
         {
             // Step 1: Find the user record with the provided email
             var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
@@ -44,22 +34,54 @@ namespace TimeSheet_Backend.Controllers
                 // If the user with the given email is not found, return NotFound
                 return NotFound("User not found");
             }
+            var timeSheetData = await _context.TimeSheets
+                        .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
+                        .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
+                        .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
+                        {
+                            tup.t.TimeSheetId,
+                            tup.p.ProjectName,
+                            a.ActivityName,
+                            tup.u.Username,
+                            tup.u.UserId,
+                            tup.t.task,
+                            tup.t.hours,
+                            tup.t.CreatedDate
+                        })
+                        .Where(data => data.UserId == userRecord.UserId)
+                        .ToListAsync(); 
 
-            // Step 2: Find timesheets associated with the user using the UserId
-            var userRecords = await _context.TimeSheets
-                .Where(r => r.UserId == userRecord.UserId)
-                .ToListAsync();
-
-            if (userRecords.Count == 0)
-            {
-                // If no timesheets are found for the user, return NotFound
-                return NotFound("No timesheets found for the user");
-            }
-
-            // Return the list of timesheets associated with the user
-            return Ok(userRecords);
+            return Ok(timeSheetData);
         }
 
+
+
+        /* [HttpGet("GetRecordsByEmail")]
+         public async Task<ActionResult<List<TimeSheet>>> ReadData(string email)
+         {
+             // Step 1: Find the user record with the provided email
+             var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
+             if (userRecord == null)
+             {
+                 // If the user with the given email is not found, return NotFound
+                 return NotFound("User not found");
+             }
+
+             // Step 2: Find timesheets associated with the user using the UserId
+             var userRecords = await _context.TimeSheets
+                 .Where(r => r.UserId == userRecord.UserId)
+                 .ToListAsync();
+
+             if (userRecords.Count == 0)
+             {
+                 // If no timesheets are found for the user, return NotFound
+                 return NotFound("No timesheets found for the user");
+             }
+
+             // Return the list of timesheets associated with the user
+             return Ok(userRecords);
+         }
+        */
         [HttpDelete("DeleteUserByEmail")]
         public async Task<IActionResult> DeleteRecord(string email, int index)
         {
@@ -167,20 +189,53 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpGet("oneweek")]
-        public IActionResult GetTimesheetsForOneWeek([FromQuery] DateTime startDate)
+        public async Task<ActionResult<TimeSheet>> GetTimesheetsForOneWeek([FromQuery] DateTime startDate)
         {
             // Calculate the end date as one week from the start date
             DateTime endDate = startDate.AddDays(7);
 
             // Fetch timesheet records for the specified user and within the date range
-            List<TimeSheet> timesheets = _context.TimeSheets
-                            .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date < endDate.Date )
-                            .ToList();
+            var userRecords = await _context.TimeSheets
+                          .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
+                          .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
+                          .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
+                          {
+                              tup.t.TimeSheetId,
+                              tup.p.ProjectName,
+                              a.ActivityName,
+                              tup.u.Username,
+                              tup.u.UserId,
+                              tup.t.task,
+                              tup.t.hours,
+                              tup.t.CreatedDate
+                          })
 
-            return Ok(timesheets);
+                            .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date < endDate.Date )
+                            .ToListAsync();
+
+            return Ok(userRecords);
         }
 
-       
+        [HttpGet("GetAllUserRecords")]
+        public async Task<ActionResult<List<object>>> GetAllUserRecords()
+        {
+            var timeSheetData = await _context.TimeSheets
+                .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
+                .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
+                .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
+                {
+                    tup.t.TimeSheetId,
+                    tup.p.ProjectName,
+                    a.ActivityName,
+                    tup.u.Username,
+                    tup.t.task,
+                    tup.t.hours,
+                    tup.t.CreatedDate
+                })
+                .ToListAsync();
+
+            return Ok(timeSheetData);
+        }
 
     }
 }

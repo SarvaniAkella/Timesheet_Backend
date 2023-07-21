@@ -32,25 +32,36 @@ namespace TimeSheet_Backend.Controllers
             List<TimeSheet> users = await _context.TimeSheets.ToListAsync();
             return Ok(users);
         }
-        [HttpGet("GetTimesheetsByEmail")]
-        public async Task<ActionResult<List<TimeSheet>>> GetTimesheetsByEmail(string email)
+        [HttpGet("GetAllUserRecordsByemail")]
+        public async Task<ActionResult<List<object>>> GetAllUserRecordsByEmail(string email)
         {
             // Step 1: Find the user record with the provided email
-            var userRecord = await _context.Users.FirstOrDefaultAsync(r => r.Email == email);
+            var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
             if (userRecord == null)
             {
                 // If the user with the given email is not found, return NotFound
                 return NotFound("User not found");
             }
+            var timeSheetData = await _context.TimeSheets
+                        .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
+                        .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
+                        .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
+                        {
+                            tup.t.TimeSheetId,
+                            tup.p.ProjectName,
+                            a.ActivityName,
+                            tup.u.Username,
+                            tup.u.UserId,
+                            tup.t.task,
+                            tup.t.hours,
+                            tup.t.CreatedDate
+                        })
+                        .Where(data => data.UserId == userRecord.UserId)
+                        .ToListAsync();
 
-            // Step 2: Find timesheets associated with the user using the UserId
-            var userTimesheets = await _context.TimeSheets
-                .Where(ts => ts.UserId == userRecord.UserId)
-                .ToListAsync();
-         
-            // Return the list of timesheets associated with the user
-            return Ok(userTimesheets);
+            return Ok(timeSheetData);
         }
+
 
 
     }
