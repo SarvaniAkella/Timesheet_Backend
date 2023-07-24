@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -182,14 +183,15 @@ namespace TimeSheet_Backend.Controllers
 
 
         [HttpGet("GetUserDataForWeek")]
-        public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneWeek(int userid, [FromQuery] DateTime startDate)
+        public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneWeek(int userid, [FromQuery] DateTime inputDate)
         {
             // Calculate the end date as one week from the start date
-            DateTime endDate = startDate.AddDays(7);
+            DateTime startOfWeek = inputDate.Date.AddDays(-(int)inputDate.DayOfWeek);
+            DateTime endOfWeek = startOfWeek.AddDays(6);
 
             // Fetch timesheet records for the specified user and within the date range
             //List<TimeSheet> timesheets = _context.TimeSheets
-                var timeSheetData = await _context.TimeSheets
+            var timeSheetData = await _context.TimeSheets
                         .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
                         .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
                         .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
@@ -203,7 +205,7 @@ namespace TimeSheet_Backend.Controllers
                             tup.t.hours,
                             tup.t.CreatedDate
                         })
-                .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date < endDate.Date && t.UserId==userid)
+                .Where(t => t.CreatedDate.Date >= startOfWeek.Date && t.CreatedDate.Date <= endOfWeek.Date && t.UserId==userid)
                 .ToListAsync();
 
             return Ok(timeSheetData);
