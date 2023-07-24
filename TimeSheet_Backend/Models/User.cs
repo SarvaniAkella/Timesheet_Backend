@@ -13,6 +13,7 @@ namespace TimeSheet_Backend.Models
         public string Password { get; set; }
         public string Mobileno { get; set; }
 
-       //public List<TimeSheet> TimeSheets { get; set; }
+        public int roleId { get; set; }
+        public List<TimeSheet> TimeSheets { get; set; }
     }
 }

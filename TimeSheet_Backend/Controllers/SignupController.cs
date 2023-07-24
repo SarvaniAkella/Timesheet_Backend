@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 using TimeSheet_Backend.Models;
 
 [ApiController]
@@ -14,7 +16,7 @@ public class SignupController : ControllerBase
     }
 
     [HttpPost("signup")]
-    public async Task<IActionResult> Signup([FromBody] User model)
+    public async Task<IActionResult> Signup([FromBody] User1 model)
     {
         if (!ModelState.IsValid)
         {
@@ -26,15 +28,38 @@ public class SignupController : ControllerBase
         {
             return Conflict("email already exists.");
         }
+        
+
+        string[] emailParts = model.Email.Split('@');
+        int roleid;
+        if (emailParts[1] == "admin.com")
+        {
+            var record = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
+             roleid = record.roleId;
+        }
+
+        else if (emailParts[1] == "hr.com")
+        {
+            var record = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
+             roleid = record.roleId;
+        }
+        else 
+        {
+            var record = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
+            roleid = record.roleId;
+        }
 
         // Create a new user object and set its properties 
         var user = new User
         {
+          
             Username = model.Username,
             Password = model.Password, // You should hash the password securely before storing it.
             Mobileno = model.Mobileno,
-            Email = model.Email
+            Email = model.Email,
+            roleId = roleid
         };
+       
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
@@ -60,18 +85,39 @@ public class SignupController : ControllerBase
         {
             return BadRequest("Invalid password");
         }
-
-  
-        return Ok("login Success");
-
-
-
-
+        string[] emailParts = request.Email.Split('@');
+        int roleid;
+        
+        if (emailParts[1] == "admin.com")
+        {
+            var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
+            roleid = record1.roleId;
+        }
+        else if (emailParts[1] == "hr.com")
+        {
+            var record1 = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
+            roleid = record1.roleId;
+        }
+        else
+        {
+            var record1 = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
+            roleid = record1.roleId;
+        }
+        var response = new
+        {
+            roleId = roleid,
+            userId = user.UserId
+        };
+        return Ok(response);
     }
 
 
 
+}
 
 
-    }
+
+
+
+    
 

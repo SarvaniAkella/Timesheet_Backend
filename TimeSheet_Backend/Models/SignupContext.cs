@@ -16,7 +16,7 @@ namespace TimeSheet_Backend.Models
 
         public DbSet<Activity> Activities { get; set; }
         public DbSet<TimeSheet> TimeSheets { get; set; }
-
+        public DbSet<role> roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,7 +47,15 @@ namespace TimeSheet_Backend.Models
              new Activity { ActivityId = 10, ActivityName = "Planning" },
              new Activity { ActivityId = 11, ActivityName = "PTO" }
          );
-          
+
+            modelBuilder.Entity<role>().HasData(
+            new role { roleId = 1, roleName = "User" },
+            new role { roleId = 2, roleName = "Admin" },
+            new role { roleId = 3, roleName = "Hr" }
+
+         );   
+
+
             // Add any ot;her seed data or model configurations here
         }
 

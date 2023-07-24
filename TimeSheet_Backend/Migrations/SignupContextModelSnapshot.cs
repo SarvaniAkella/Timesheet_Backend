@@ -184,6 +184,12 @@ namespace TimeSheet_Backend.Migrations
 
                     b.HasKey("TimeSheetId");
 
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("TimeSheets");
                 });
 
@@ -211,9 +217,88 @@ namespace TimeSheet_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("roleId")
+                        .HasColumnType("int");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.role", b =>
+                {
+                    b.Property<int>("roleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("roleId"));
+
+                    b.Property<string>("roleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("roleId");
+
+                    b.ToTable("roles");
+
+                    b.HasData(
+                        new
+                        {
+                            roleId = 1,
+                            roleName = "User"
+                        },
+                        new
+                        {
+                            roleId = 2,
+                            roleName = "Admin"
+                        },
+                        new
+                        {
+                            roleId = 3,
+                            roleName = "Hr"
+                        });
+                });
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.TimeSheet", b =>
+                {
+                    b.HasOne("TimeSheet_Backend.Models.Activity", "Activity")
+                        .WithMany("TimeSheets")
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TimeSheet_Backend.Models.Project", "Project")
+                        .WithMany("TimeSheets")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TimeSheet_Backend.Models.User", "User")
+                        .WithMany("TimeSheets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.Activity", b =>
+                {
+                    b.Navigation("TimeSheets");
+                });
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.Project", b =>
+                {
+                    b.Navigation("TimeSheets");
+                });
+
+            modelBuilder.Entity("TimeSheet_Backend.Models.User", b =>
+                {
+                    b.Navigation("TimeSheets");
                 });
 #pragma warning restore 612, 618
         }

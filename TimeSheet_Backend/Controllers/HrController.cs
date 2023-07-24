@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TimeSheet_Backend.Models;
+using static TimeSheet_Backend.Controllers.AdminController;
 
 namespace TimeSheet_Backend.Controllers
 {
@@ -32,32 +33,23 @@ namespace TimeSheet_Backend.Controllers
             List<TimeSheet> users = await _context.TimeSheets.ToListAsync();
             return Ok(users);
         }
-        [HttpGet("GetAllUserRecordsByemail")]
-        public async Task<ActionResult<List<object>>> GetAllUserRecordsByEmail(string email)
+        [HttpGet("GetTimeSheetsByUserId")]
+        public async Task<ActionResult<List<TimeSheetDataDto>>> GetTimeSheetsByUserId(int userId)
         {
-            // Step 1: Find the user record with the provided email
-            var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
-            if (userRecord == null)
-            {
-                // If the user with the given email is not found, return NotFound
-                return NotFound("User not found");
-            }
-            var timeSheetData = await _context.TimeSheets
-                        .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
-                        .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
-                        .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
-                        {
-                            tup.t.TimeSheetId,
-                            tup.p.ProjectName,
-                            a.ActivityName,
-                            tup.u.Username,
-                            tup.u.UserId,
-                            tup.t.task,
-                            tup.t.hours,
-                            tup.t.CreatedDate
-                        })
-                        .Where(data => data.UserId == userRecord.UserId)
-                        .ToListAsync();
+            var timeSheetData = (from t in _context.TimeSheets
+                                 where t.UserId == userId
+                                 join u in _context.Users on t.UserId equals u.UserId
+                                 join p in _context.Projects on t.ProjectId equals p.ProjectId
+                                 join a in _context.Activities on t.ActivityId equals a.ActivityId
+                                 select new TimeSheetDataDto
+                                 {
+                                     ProjectName = p.ProjectName,
+                                     ActivityName = a.ActivityName,
+                                     Username = u.Username,
+                                     Task = t.task,
+                                     HoursWorked = t.hours,
+                                     Date = t.CreatedDate
+                                 }).ToList();
 
             return Ok(timeSheetData);
         }

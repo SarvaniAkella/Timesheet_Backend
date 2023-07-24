@@ -5,7 +5,7 @@
         public int ProjectId { get; set; } 
         public string  ProjectName { get; set; }
 
-        //public List<TimeSheet> TimeSheets { get; set; }
+        public List<TimeSheet> TimeSheets { get; set; }
     }
 
    /* public enum projectname
