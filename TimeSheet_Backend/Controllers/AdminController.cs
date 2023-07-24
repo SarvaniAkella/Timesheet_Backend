@@ -24,6 +24,40 @@ namespace TimeSheet_Backend.Controllers
             return Ok(users);
         }
 
+        [HttpGet("oneweek")]
+        public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneWeek([FromQuery] DateTime startDate)
+        {
+            // Calculate the end date as one week from the start date
+            DateTime endDate = startDate.AddDays(7);
+
+
+
+            // Fetch timesheet records for the specified user and within the date range
+            var userRecords = await _context.TimeSheets
+                          .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
+                          .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
+                          .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
+                          {
+                              tup.t.TimeSheetId,
+                              tup.p.ProjectName,
+                              a.ActivityName,
+                              tup.u.Username,
+                              tup.u.UserId,
+                              tup.t.task,
+                              tup.t.hours,
+                              tup.t.CreatedDate
+                          })
+
+
+
+                            .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date < endDate.Date)
+                            .ToListAsync();
+
+
+
+            return Ok(userRecords);
+        }
+
         /*   [HttpGet("GetAllUserRecordsByemail")]
            public async Task<ActionResult<List<object>>> GetAllUserRecordsByEmail(string email)
            {

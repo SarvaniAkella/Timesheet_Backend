@@ -181,8 +181,8 @@ namespace TimeSheet_Backend.Controllers
         }
 
 
-      /*  [HttpGet("GetUserDataForWeek")]
-        public async Task<ActionResult<TimeSheet>> GetTimesheetsForOneWeek(int userid, [FromQuery] DateTime startDate)
+        [HttpGet("GetUserDataForWeek")]
+        public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneWeek(int userid, [FromQuery] DateTime startDate)
         {
             // Calculate the end date as one week from the start date
             DateTime endDate = startDate.AddDays(7);
@@ -207,7 +207,7 @@ namespace TimeSheet_Backend.Controllers
                 .ToListAsync();
 
             return Ok(timeSheetData);
-        }*/
+        }
         [HttpGet("GetRecordsTwoDates")]
         public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsoneweek(DateTime startDate, DateTime endDate)
         {
