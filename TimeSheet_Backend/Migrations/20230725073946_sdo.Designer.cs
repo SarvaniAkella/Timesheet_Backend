@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeSheet_Backend.Models;
 
@@ -11,9 +12,11 @@ using TimeSheet_Backend.Models;
 namespace TimeSheet_Backend.Migrations
 {
     [DbContext(typeof(SignupContext))]
-    partial class SignupContextModelSnapshot : ModelSnapshot
+    [Migration("20230725073946_sdo")]
+    partial class sdo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

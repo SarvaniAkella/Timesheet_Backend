@@ -30,15 +30,15 @@ public class SignupController : ControllerBase
         }
         
 
-        string[] emailParts = model.Email.Split('@');
+        //string[] emailParts = model.Email.Split('@');
         int roleid;
-        if (emailParts[1] == "admin.com")
+        if (model.Email == "srikanth@smbxl.com")
         {
             var record = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
              roleid = record.roleId;
         }
 
-        else if (emailParts[1] == "hr.com")
+        else if (model.Email == "hr@smbxl.com")
         {
             var record = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
              roleid = record.roleId;
@@ -85,15 +85,15 @@ public class SignupController : ControllerBase
         {
             return BadRequest("Invalid password");
         }
-        string[] emailParts = request.Email.Split('@');
+       // string[] emailParts = request.Email.Split('@');
         int roleid;
         
-        if (emailParts[1] == "admin.com")
+        if (request.Email == "srikanth@smbxl.com")
         {
             var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
             roleid = record1.roleId;
         }
-        else if (emailParts[1] == "hr.com")
+        else if (request.Email == "hr@smbxl.com")
         {
             var record1 = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
             roleid = record1.roleId;

@@ -50,8 +50,8 @@ namespace TimeSheet_Backend.Models
 
             modelBuilder.Entity<role>().HasData(
             new role { roleId = 1, roleName = "User" },
-            new role { roleId = 2, roleName = "Admin" },
-            new role { roleId = 3, roleName = "Hr" }
+            new role { roleId = 2, roleName = "Hr" },
+            new role { roleId = 3, roleName = "Admin" }
 
          );   
 
