@@ -180,3 +180,7 @@ D:\sarvani\Timesheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\refint\TimeSheet
 D:\sarvani\Timesheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\TimeSheet_Backend.pdb
 D:\sarvani\Timesheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\TimeSheet_Backend.genruntimeconfig.cache
 D:\sarvani\Timesheet_Backend\TimeSheet_Backend\obj\Debug\net6.0\ref\TimeSheet_Backend.dll
+D:\sarvani\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\sarvani\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\Scrutor.dll
+D:\sarvani\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.Filters.dll
+D:\sarvani\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

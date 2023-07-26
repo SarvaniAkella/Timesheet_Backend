@@ -1,34 +1,56 @@
-﻿using Azure.Identity;
+﻿using Azure.Core;
+using Azure.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using TimeSheet_Backend.Models;
 
 [ApiController]
 //[Route("api/signup")]
 public class SignupController : ControllerBase
 {
+
     private readonly SignupContext _context;
 
-    public SignupController(SignupContext context)
+   // private IConfiguration _configuration;
+
+   public static User user = new User();
+
+    public SignupController(SignupContext context/*, IConfiguration configuration*/) 
     {
         _context = context;
+        /*_configuration = configuration;*/
     }
 
-    [HttpPost("signup")]
-    public async Task<IActionResult> Signup([FromBody] User1 model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
 
-        // Check if the username or email already exists in the database
+    [HttpPost("signup")]
+    public async Task<IActionResult> Signup(User1 model)
+    {
+        //user = new User();
+
         if (await _context.Users.AnyAsync(u => u.Email == model.Email))
         {
             return Conflict("email already exists.");
         }
-        
+
+        /* CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+
+        user.PasswordHash = passwordHash;
+        user.PasswordSalt = passwordSalt;
+        user.Username = model.Username;
+        user.Mobileno = model.Mobileno;
+      
+        user.Email = model.Email;*/
+
+
+
+
+
 
         //string[] emailParts = model.Email.Split('@');
         int roleid;
@@ -50,16 +72,16 @@ public class SignupController : ControllerBase
         }
 
         // Create a new user object and set its properties 
-        var user = new User
-        {
-          
-            Username = model.Username,
-            Password = model.Password, // You should hash the password securely before storing it.
-            Mobileno = model.Mobileno,
-            Email = model.Email,
-            roleId = roleid
-        };
-       
+       var user = new User
+         {
+
+             Username = model.Username,
+             Password = model.Password, // You should hash the password securely before storing it.
+             Mobileno = model.Mobileno,
+             Email = model.Email,
+             roleId = roleid
+         };
+        user.roleId = roleid;
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
@@ -67,27 +89,71 @@ public class SignupController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Loginuser(Login request)
+      [HttpPost("login")]
+      public async Task<IActionResult> Loginuser(Login request)
+      {
+          var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+
+
+          if (user == null)
+          {
+              return NotFound("User not found");
+          }
+
+
+
+          if (user.Password != request.Password)
+          {
+              return BadRequest("Invalid password");
+          }
+         // string[] emailParts = request.Email.Split('@');
+          int roleid;
+
+          if (request.Email == "srikanth@smbxl.com")
+          {
+              var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
+              roleid = record1.roleId;
+          }
+          else if (request.Email == "hr@smbxl.com")
+          {
+              var record1 = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
+              roleid = record1.roleId;
+          }
+          else
+          {
+              var record1 = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
+              roleid = record1.roleId;
+          }
+
+          
+          var response = new
+          {
+              roleId = roleid,
+              userId = user.UserId,
+           
+
+          };
+          return Ok(response);
+      }
+
+    /*[HttpPost("login")]
+    public async Task<ActionResult<string>> Login(Login request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var email = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
+        var user = new User();
 
-
-        if (user == null)
+        if (email== null)
         {
             return NotFound("User not found");
         }
-
-
-
-        if (user.Password != request.Password)
+        if(!VerifyPasswordHash(request.Password,email.PasswordHash,email.PasswordSalt)) 
         {
-            return BadRequest("Invalid password");
+            return BadRequest("Wrong Password");
         }
-       // string[] emailParts = request.Email.Split('@');
         int roleid;
-        
+
         if (request.Email == "srikanth@smbxl.com")
         {
             var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
@@ -103,14 +169,61 @@ public class SignupController : ControllerBase
             var record1 = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
             roleid = record1.roleId;
         }
+
+        string token = CreateToken(email);
         var response = new
         {
             roleId = roleid,
-            userId = user.UserId
+            userId = user.UserId,
+            tokenid = token
+
         };
         return Ok(response);
+
+        
     }
 
+   private void CreatePasswordHash(string password,out byte[] passwordHash, out byte[] passwordSalt)
+    {
+        using(var hmac = new HMACSHA512())
+        {
+            passwordSalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));  
+        }
+    }
+
+    private bool VerifyPasswordHash(string password,  byte[] passwordHash, byte[] passwordSalt)
+    {
+        
+
+        using (var hmac = new HMACSHA512(passwordSalt))
+        {
+           var computedHash=hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
+        }
+    }
+
+    private string CreateToken(User user)
+    {
+        try {
+            List<Claim> claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Email)
+        };
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _configuration.GetSection("AppSettings:Token").Value));
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: cred);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
+        catch (Exception a) { }
+        return null;
+    }*/
 
 
 }
@@ -119,5 +232,5 @@ public class SignupController : ControllerBase
 
 
 
-    
+
 

@@ -24,6 +24,28 @@ namespace TimeSheet_Backend.Controllers
             return Ok(users);
         }
 
+        [HttpDelete("DeleteProject")]
+
+        public async Task<IActionResult> DeleteProject(Project1 request)
+        {
+            var record = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectName == request.ProjectName);
+            _context.Projects.Remove(record);
+            await _context.SaveChangesAsync();
+
+            return Ok("Project deleted successfully.");
+        }
+
+        [HttpDelete("DeleteActivity")]
+
+        public async Task<IActionResult> DeleteActivity(Activity1 request)
+        {
+            var record = await _context.Activities.FirstOrDefaultAsync(p => p.ActivityName == request.ActivityName);
+            _context.Activities.Remove(record);
+            await _context.SaveChangesAsync();
+
+            return Ok("Record deleted successfully.");
+        }
+
         [HttpGet("oneweek")]
         public async Task<ActionResult<TimeSheetDTO>> GetTimesheetForOneWeek(int userid, [FromQuery] DateTime inputDate)
         {
@@ -121,21 +143,21 @@ namespace TimeSheet_Backend.Controllers
             public int HoursWorked { get; set; }
             public DateTime Date { get; set; }
         }
-        [HttpDelete("DeleteUserByEmail")]
-        public async Task<IActionResult> DeleteRecord(string email, int index)
+        [HttpDelete("DeleteUserTimesheetByTimesheetId")]
+        public async Task<IActionResult> DeleteRecord(int Timesheetid)
         {
             // Find the record by ID and email
-            var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
+            /*var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
             if (userRecord == null)
             {
                 // If the user with the given email is not found, return NotFound
                 return NotFound("User not found");
-            }
+            }*/
 
             // Step 2: Find timesheets associated with the user using the UserId
             var record = await _context.TimeSheets
-                .Where(r => r.UserId == userRecord.UserId)
-                .ToListAsync();
+                .Where(r => r.TimeSheetId == Timesheetid)
+                .FirstOrDefaultAsync();
 
             if (record == null)
             {
@@ -143,17 +165,17 @@ namespace TimeSheet_Backend.Controllers
             }
 
             // Remove the record from the context
-            _context.TimeSheets.Remove(record[index]);
+            _context.TimeSheets.Remove(record);
             await _context.SaveChangesAsync();
 
             return Ok("Record deleted successfully.");
         }
 
-        [HttpDelete("DeleteUser")]
-        public async Task<IActionResult> DeleteUser(string email)
+        [HttpDelete("DeleteUserByUserId")]
+        public async Task<IActionResult> DeleteUser(int userid)
         {
             // Find the user in the database
-            var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
+            var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.UserId == userid);
             if (userRecord == null)
             {
                 // If the user with the given email is not found, return NotFound

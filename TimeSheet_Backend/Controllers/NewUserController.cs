@@ -1,15 +1,18 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+//using System.Web.Http;
 using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
 {
     //[Route("api/[controller]")]
     [ApiController]
+   
     public class NewUserController : ControllerBase
     {
         private readonly SignupContext _context;
@@ -18,7 +21,7 @@ namespace TimeSheet_Backend.Controllers
         {
             _context = context;
         }
-        [HttpGet("GetAllProjects")]
+        [HttpGet("GetAllProjects"),Authorize]
 
         public async Task<ActionResult<List<ProjectDTO>>> GetAllProjects()
         {
@@ -41,6 +44,7 @@ namespace TimeSheet_Backend.Controllers
             // Return the list of activities
             return Ok(activities);
         }
+
         [HttpPost("AddTask")]
         public async Task<IActionResult> SaveUser(TimeSheet1 request)
              

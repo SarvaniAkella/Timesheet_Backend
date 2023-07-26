@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TimeSheet_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class wd : Migration
+    public partial class hello : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,7 +60,8 @@ namespace TimeSheet_Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     Mobileno = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     roleId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -144,8 +145,8 @@ namespace TimeSheet_Backend.Migrations
                 values: new object[,]
                 {
                     { 1, "User" },
-                    { 2, "Admin" },
-                    { 3, "Hr" }
+                    { 2, "Hr" },
+                    { 3, "Admin" }
                 });
 
             migrationBuilder.CreateIndex(

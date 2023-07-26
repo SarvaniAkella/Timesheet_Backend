@@ -12,8 +12,8 @@ using TimeSheet_Backend.Models;
 namespace TimeSheet_Backend.Migrations
 {
     [DbContext(typeof(SignupContext))]
-    [Migration("20230725073946_sdo")]
-    partial class sdo
+    [Migration("20230726110940_hio")]
+    partial class hio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

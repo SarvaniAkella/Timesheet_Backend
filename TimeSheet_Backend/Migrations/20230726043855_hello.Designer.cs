@@ -12,8 +12,8 @@ using TimeSheet_Backend.Models;
 namespace TimeSheet_Backend.Migrations
 {
     [DbContext(typeof(SignupContext))]
-    [Migration("20230724093349_wd")]
-    partial class wd
+    [Migration("20230726043855_hello")]
+    partial class hello
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,9 +212,13 @@ namespace TimeSheet_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -253,12 +257,12 @@ namespace TimeSheet_Backend.Migrations
                         new
                         {
                             roleId = 2,
-                            roleName = "Admin"
+                            roleName = "Hr"
                         },
                         new
                         {
                             roleId = 3,
-                            roleName = "Hr"
+                            roleName = "Admin"
                         });
                 });
 
