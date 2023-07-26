@@ -5,7 +5,7 @@ using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
 {
-  //  [Route("api/[controller]")]
+  [Route("[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -14,8 +14,31 @@ namespace TimeSheet_Backend.Controllers
         {
             _context = context;
         }
+        [HttpGet("getAllProjects")]
 
-        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<List<ProjectDTO>>> GetAllProjects()
+        {
+            // Query the Activities table and fetch ActivityId and ActivityName using Entity Framework
+            var projects = await _context.Projects
+                .Select(a => new ProjectDTO { ProjectId = a.ProjectId, ProjectName = a.ProjectName })
+                .ToListAsync();
+
+            // Return the list of activities
+            return Ok(projects);
+        }
+        [HttpGet("getAllActivities")]
+        public async Task<ActionResult<List<ActivityDTO>>> GetAllActivities()
+        {
+            // Query the Activities table and fetch ActivityId and ActivityName using Entity Framework
+            var activities = await _context.Activities
+                .Select(a => new ActivityDTO { ActivityId = a.ActivityId, ActivityName = a.ActivityName })
+                .ToListAsync();
+
+            // Return the list of activities
+            return Ok(activities);
+        }
+
+        [HttpGet("getAllUsers")]
 
         public async Task<IActionResult> GetAllUsers()
         {
@@ -24,7 +47,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok(users);
         }
 
-        [HttpDelete("DeleteProject")]
+        [HttpDelete("deleteProject")]
 
         public async Task<IActionResult> DeleteProject(Project1 request)
         {
@@ -35,7 +58,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok("Project deleted successfully.");
         }
 
-        [HttpDelete("DeleteActivity")]
+        [HttpDelete("deleteActivity")]
 
         public async Task<IActionResult> DeleteActivity(Activity1 request)
         {
@@ -46,7 +69,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok("Record deleted successfully.");
         }
 
-        [HttpGet("oneweek")]
+        [HttpGet("getDataForOneWeek")]
         public async Task<ActionResult<TimeSheetDTO>> GetTimesheetForOneWeek(int userid, [FromQuery] DateTime inputDate)
         {
             // Calculate the end date as one week from the start date
@@ -143,7 +166,7 @@ namespace TimeSheet_Backend.Controllers
             public int HoursWorked { get; set; }
             public DateTime Date { get; set; }
         }
-        [HttpDelete("DeleteUserTimesheetByTimesheetId")]
+        [HttpDelete("deleteUserTimesheetByTimesheetId")]
         public async Task<IActionResult> DeleteRecord(int Timesheetid)
         {
             // Find the record by ID and email
@@ -171,7 +194,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok("Record deleted successfully.");
         }
 
-        [HttpDelete("DeleteUserByUserId")]
+        [HttpDelete("deleteUserByUserId")]
         public async Task<IActionResult> DeleteUser(int userid)
         {
             // Find the user in the database
@@ -251,7 +274,7 @@ namespace TimeSheet_Backend.Controllers
        */
 
 
-        [HttpGet("GetRecordsB/WTwoDates")]
+        [HttpGet("getRecordsB/WTwoDates")]
         public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneWeek(DateTime startDate,DateTime endDate)
         {
             // Calculate the end date as one week from the start date
@@ -279,7 +302,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok(userRecords);
         }
 
-         [HttpGet("GetAllUserRecords")]
+         [HttpGet("getAllUserRecords")]
          public async Task<ActionResult<List<TimeSheetDTO>>> GetAllUserRecords()
          {
              var timeSheetData = await _context.TimeSheets
@@ -301,7 +324,7 @@ namespace TimeSheet_Backend.Controllers
          }
      
 
-        [HttpGet("GetTimeSheetsByUserId")]
+        [HttpGet("getTimeSheetsByUserId")]
         public async Task<ActionResult<List<TimeSheetDataDto>>> GetTimeSheetsByUserId(int userId)
         {
             var timeSheetData = (from t in _context.TimeSheets
@@ -325,7 +348,7 @@ namespace TimeSheet_Backend.Controllers
 
 
 
-        [HttpPost("AddProject")]
+        [HttpPost("addProject")]
         public async Task<IActionResult> AddProject(Project1 request)
 
         {
@@ -351,7 +374,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok("Project added successfully");
         }
 
-        [HttpPost("AddActivity")]
+        [HttpPost("addActivity")]
         public async Task<IActionResult> AddActivity(Activity1 request)
 
         {

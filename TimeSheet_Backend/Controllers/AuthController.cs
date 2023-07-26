@@ -10,8 +10,8 @@ using System.Security.Cryptography;
 using TimeSheet_Backend.Models;
 
 [ApiController]
-//[Route("api/signup")]
-public class SignupController : ControllerBase
+[Route("[controller]")]
+public class AuthController : ControllerBase
 {
 
     private readonly SignupContext _context;
@@ -20,14 +20,14 @@ public class SignupController : ControllerBase
 
    public static User user = new User();
 
-    public SignupController(SignupContext context/*, IConfiguration configuration*/) 
+    public AuthController(SignupContext context/*, IConfiguration configuration*/) 
     {
         _context = context;
         /*_configuration = configuration;*/
     }
 
 
-    [HttpPost("signup")]
+    [HttpPost("signUp")]
     public async Task<IActionResult> Signup(User1 model)
     {
         //user = new User();

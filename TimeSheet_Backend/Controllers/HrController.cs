@@ -6,7 +6,7 @@ using static TimeSheet_Backend.Controllers.AdminController;
 
 namespace TimeSheet_Backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class HrController : ControllerBase
     {
@@ -16,7 +16,7 @@ namespace TimeSheet_Backend.Controllers
             _context = context;
         }
 
-        [HttpGet("GetAllUsers")]
+        [HttpGet("getAllUsers")]
 
         public async Task<IActionResult> GetAllUsers()
         {
@@ -25,7 +25,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok(users);
         }
 
-        [HttpGet("GetAllUserRecords")]
+        [HttpGet("getAllUserRecords")]
 
         public async Task<IActionResult> GetAllRecords()
         {
@@ -33,7 +33,7 @@ namespace TimeSheet_Backend.Controllers
             List<TimeSheet> users = await _context.TimeSheets.ToListAsync();
             return Ok(users);
         }
-        [HttpGet("GetTimeSheetsByUserId")]
+        [HttpGet("getTimeSheetsByUserId")]
         public async Task<ActionResult<List<TimeSheetDataDto>>> GetTimeSheetsByUserId(int userId)
         {
             var timeSheetData = (from t in _context.TimeSheets

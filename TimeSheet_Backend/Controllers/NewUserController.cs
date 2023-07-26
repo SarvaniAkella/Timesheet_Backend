@@ -10,7 +10,7 @@ using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
 {
-    //[Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
    
     public class NewUserController : ControllerBase
@@ -21,19 +21,19 @@ namespace TimeSheet_Backend.Controllers
         {
             _context = context;
         }
-        [HttpGet("GetAllProjects"),Authorize]
+        [HttpGet("getAllProjects")]
 
         public async Task<ActionResult<List<ProjectDTO>>> GetAllProjects()
         {
             // Query the Activities table and fetch ActivityId and ActivityName using Entity Framework
-            var activities = await _context.Projects
+            var projects = await _context.Projects
                 .Select(a => new ProjectDTO{ ProjectId = a.ProjectId, ProjectName = a.ProjectName })
                 .ToListAsync();
 
             // Return the list of activities
-            return Ok(activities);
+            return Ok(projects);
         }
-        [HttpGet("GetAllActivities")]
+        [HttpGet("getAllActivities")]
         public async Task<ActionResult<List<ActivityDTO>>> GetAllActivities()
         {
             // Query the Activities table and fetch ActivityId and ActivityName using Entity Framework
@@ -45,7 +45,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok(activities);
         }
 
-        [HttpPost("AddTask")]
+        [HttpPost("addTask")]
         public async Task<IActionResult> SaveUser(TimeSheet1 request)
              
         {
@@ -76,7 +76,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok("Activity added successfully");
         }
 
-        [HttpPut("EditTaskByTimesheetId")]
+        [HttpPut("editTaskByTimesheetid")]
         public async Task<IActionResult> Edit(TimeSheetDTO model)
         {
             var user = await _context.TimeSheets.FindAsync(model.TimeSheetId);
@@ -98,7 +98,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok();
 
         }
-        [HttpDelete("DeleteTaskByTimesheetId")]
+        [HttpDelete("deleteTaskByTimesheetid")]
         public async Task<IActionResult> DeleteRecord(int Timesheetid)
         {
             // Find the record by ID and email
@@ -116,7 +116,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok("Record deleted successfully.");
         }
 
-        [HttpGet("GetUserDataByUserid")]
+        [HttpGet("getUserDataByUserid")]
         public async Task<ActionResult<TimeSheetDTO>> ReadData(int userid)
         {
 
@@ -150,7 +150,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok(userRecords);
 
         }
-        [HttpGet("GetUserDataByDate")]
+        [HttpGet("getUserDataByDate")]
         public async Task<ActionResult<TimeSheetDTO>> GetDataByDate(int userid, DateTime date)
         {
 
@@ -186,7 +186,7 @@ namespace TimeSheet_Backend.Controllers
         }
 
 
-        [HttpGet("GetUserDataForWeek")]
+        [HttpGet("getUserDataForWeek")]
         public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneWeek(int userid, [FromQuery] DateTime inputDate)
         {
             // Calculate the end date as one week from the start date
@@ -214,7 +214,7 @@ namespace TimeSheet_Backend.Controllers
 
             return Ok(timeSheetData);
         }
-        [HttpGet("GetRecordsTwoDates")]
+        [HttpGet("getRecordsWithinRange")]
         public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsoneweek(DateTime startDate, DateTime endDate)
         {
             // Calculate the end date as one week from the start date
@@ -243,7 +243,7 @@ namespace TimeSheet_Backend.Controllers
         }
 
 
-        [HttpGet("GetTotalHoursWorked")]
+        [HttpGet("getTotalHoursWorked")]
 
         public async Task<ActionResult<int>> GetTotalHoursWorked(int userid, DateTime date)
         {
