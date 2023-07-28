@@ -24,7 +24,7 @@ options =>
     });
 });
 
-builder.Services.AddSwaggerGen(/*options =>
+builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
@@ -34,23 +34,30 @@ builder.Services.AddSwaggerGen(/*options =>
         Type = SecuritySchemeType.ApiKey
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
-}*/);
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
        options =>
        {
+
            options.TokenValidationParameters = new TokenValidationParameters
            {
                ValidateIssuerSigningKey = true,
-               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-               .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-               ValidateIssuer = false,
-               ValidateAudience = false
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+
+
 
            };
        }
 
 
-    );*/
+    );
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

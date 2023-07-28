@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using TimeSheet_Backend.Models;
 
 [ApiController]
@@ -16,14 +17,14 @@ public class AuthController : ControllerBase
 
     private readonly SignupContext _context;
 
-   // private IConfiguration _configuration;
+    private IConfiguration _configuration;
 
    public static User user = new User();
 
-    public AuthController(SignupContext context/*, IConfiguration configuration*/) 
+    public AuthController(SignupContext context, IConfiguration configuration) 
     {
         _context = context;
-        /*_configuration = configuration;*/
+        _configuration = configuration;
     }
 
 
@@ -37,7 +38,7 @@ public class AuthController : ControllerBase
             return Conflict("email already exists.");
         }
 
-        /* CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
 
         user.PasswordHash = passwordHash;
@@ -45,7 +46,7 @@ public class AuthController : ControllerBase
         user.Username = model.Username;
         user.Mobileno = model.Mobileno;
       
-        user.Email = model.Email;*/
+        user.Email = model.Email;
 
 
 
@@ -72,7 +73,7 @@ public class AuthController : ControllerBase
         }
 
         // Create a new user object and set its properties 
-       var user = new User
+       /*var user = new User
          {
 
              Username = model.Username,
@@ -80,7 +81,7 @@ public class AuthController : ControllerBase
              Mobileno = model.Mobileno,
              Email = model.Email,
              roleId = roleid
-         };
+         };*/
         user.roleId = roleid;
 
         _context.Users.Add(user);
@@ -89,7 +90,7 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
-      [HttpPost("login")]
+    /*  [HttpPost("login")]
       public async Task<IActionResult> Loginuser(Login request)
       {
           var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -135,9 +136,9 @@ public class AuthController : ControllerBase
 
           };
           return Ok(response);
-      }
+      }*/
 
-    /*[HttpPost("login")]
+    [HttpPost("login")]
     public async Task<ActionResult<string>> Login(Login request)
     {
         var email = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -174,7 +175,7 @@ public class AuthController : ControllerBase
         var response = new
         {
             roleId = roleid,
-            userId = user.UserId,
+            userId = email.UserId,
             tokenid = token
 
         };
@@ -215,7 +216,7 @@ public class AuthController : ControllerBase
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddHours(24),
                 signingCredentials: cred);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -223,7 +224,11 @@ public class AuthController : ControllerBase
         }
         catch (Exception a) { }
         return null;
-    }*/
+
+
+       
+
+    }
 
 
 }
