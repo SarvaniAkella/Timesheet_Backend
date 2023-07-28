@@ -15,7 +15,11 @@ namespace TimeSheet_Backend.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
 
+<<<<<<< HEAD
        // public string Password { get; set; }    
+=======
+        //public string Password { get; set; }    
+>>>>>>> dev
         public string Mobileno { get; set; }
 
         public int roleId { get; set; }

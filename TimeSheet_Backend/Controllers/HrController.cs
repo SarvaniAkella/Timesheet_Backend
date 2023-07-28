@@ -6,6 +6,7 @@ using static TimeSheet_Backend.Controllers.AdminController;
 
 namespace TimeSheet_Backend.Controllers
 {
+ 
     [Route("[controller]")]
     [ApiController]
     public class HrController : ControllerBase

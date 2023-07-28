@@ -38,19 +38,36 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
        options =>
        {
+
            options.TokenValidationParameters = new TokenValidationParameters
            {
                ValidateIssuerSigningKey = true,
+<<<<<<< HEAD
                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
                .GetBytes(builder.Configuration.GetSection("AppSettings:token").Value)),
                ValidateIssuer = false,
                ValidateAudience = false
+=======
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+
+
+>>>>>>> dev
 
            };
        }
 
 
     );
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> dev
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

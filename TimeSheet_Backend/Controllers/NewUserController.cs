@@ -10,6 +10,10 @@ using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
 {
+<<<<<<< HEAD
+=======
+    [Authorize]
+>>>>>>> dev
     
     [Route("[controller]")]
     [ApiController]

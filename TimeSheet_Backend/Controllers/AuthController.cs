@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using TimeSheet_Backend.Models;
 
 [ApiController]
@@ -16,7 +17,11 @@ public class AuthController : ControllerBase
 
     private readonly SignupContext _context;
 
+<<<<<<< HEAD
    private IConfiguration _configuration;
+=======
+    private IConfiguration _configuration;
+>>>>>>> dev
 
    //public static User user = new User();
 
@@ -72,7 +77,11 @@ public class AuthController : ControllerBase
         }
 
         // Create a new user object and set its properties 
+<<<<<<< HEAD
       /* var user = new User
+=======
+       /*var user = new User
+>>>>>>> dev
          {
 
              Username = model.Username,
@@ -89,7 +98,11 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+<<<<<<< HEAD
      /* [HttpPost("login")]
+=======
+    /*  [HttpPost("login")]
+>>>>>>> dev
       public async Task<IActionResult> Loginuser(Login request)
       {
           var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -215,7 +228,7 @@ public class AuthController : ControllerBase
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddHours(24),
                 signingCredentials: cred);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -223,6 +236,13 @@ public class AuthController : ControllerBase
         }
         catch (Exception a) { }
         return null;
+<<<<<<< HEAD
+=======
+
+
+       
+
+>>>>>>> dev
     }
 
 
