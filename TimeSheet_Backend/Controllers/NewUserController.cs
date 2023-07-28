@@ -10,6 +10,7 @@ using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
 {
+    
     [Route("[controller]")]
     [ApiController]
    
@@ -21,7 +22,7 @@ namespace TimeSheet_Backend.Controllers
         {
             _context = context;
         }
-        [HttpGet("getAllProjects")]
+        [HttpGet("getAllProjects"),Authorize]
 
         public async Task<ActionResult<List<ProjectDTO>>> GetAllProjects()
         {
@@ -45,7 +46,7 @@ namespace TimeSheet_Backend.Controllers
             return Ok(activities);
         }
 
-        [HttpPost("addTask")]
+        [HttpPost("addTask"),Authorize]
         public async Task<IActionResult> SaveUser(TimeSheet1 request)
              
         {

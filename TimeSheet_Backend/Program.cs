@@ -24,7 +24,7 @@ options =>
     });
 });
 
-builder.Services.AddSwaggerGen(/*options =>
+builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
@@ -34,15 +34,15 @@ builder.Services.AddSwaggerGen(/*options =>
         Type = SecuritySchemeType.ApiKey
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
-}*/);
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
        options =>
        {
            options.TokenValidationParameters = new TokenValidationParameters
            {
                ValidateIssuerSigningKey = true,
                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-               .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+               .GetBytes(builder.Configuration.GetSection("AppSettings:token").Value)),
                ValidateIssuer = false,
                ValidateAudience = false
 
@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(/*options =>
        }
 
 
-    );*/
+    );
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,9 +61,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowOrigin");
-//app.UseAuthentication(); 
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+

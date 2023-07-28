@@ -214,7 +214,7 @@ namespace TimeSheet_Backend.Controllers
 
             return Ok("User deleted successfully.");
         }
-      /*  [HttpPut("EditTimesheet")]
+        /*[HttpPut("EditTimesheet")]
         public async Task<IActionResult> Edit(string email, int index, TimeSheet model)
         {
             var userRecord = await _context.Users.SingleOrDefaultAsync(r => r.Email == email);
@@ -246,9 +246,9 @@ namespace TimeSheet_Backend.Controllers
             await _context.SaveChangesAsync();
             return Ok();
 
-        }*/
+        }
 
-       /* [HttpPut("EditUsers")]
+       [HttpPut("EditUsers")]
         public async Task<IActionResult> UpdateUser(string email, User model)
              
         {
@@ -270,8 +270,8 @@ namespace TimeSheet_Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(user);
-        }
-       */
+        }*/
+       
 
 
         [HttpGet("getRecordsB/WTwoDates")]
