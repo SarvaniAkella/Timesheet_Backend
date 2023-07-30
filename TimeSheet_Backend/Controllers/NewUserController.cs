@@ -10,8 +10,8 @@ using TimeSheet_Backend.Models;
 
 namespace TimeSheet_Backend.Controllers
 {
-    
-    
+
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
    
@@ -51,9 +51,7 @@ namespace TimeSheet_Backend.Controllers
         public async Task<IActionResult> SaveUser(TimeSheet1 request)
              
         {
-            /* var userActivities = await _context.Users
-                      .Where(activity => (activity.Email == email))
-                      .ToListAsync();// Filter by the date part only*/
+            
           
             var newActivity = new TimeSheet
             {

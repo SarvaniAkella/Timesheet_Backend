@@ -10,232 +10,168 @@ using System.Security.Cryptography;
 using System.Text;
 using TimeSheet_Backend.Models;
 
-[ApiController]
-[Route("[controller]")]
-public class AuthController : ControllerBase
+namespace TimeSheet_Backend.Controllers
 {
 
-    private readonly SignupContext _context;
-
-   // private IConfiguration _configuration;
-
-   //public static User user = new User();
-
-    public AuthController(SignupContext context/*, IConfiguration configuration*/) 
+    [ApiController]
+    [Route("[controller]")]
+    public class AuthController : ControllerBase
     {
-        _context = context;
-       // _configuration = configuration;
-    }
 
+        private readonly SignupContext _context;
 
-    [HttpPost("signUp")]
-    public async Task<IActionResult> Signup(User1 model)
-    {
-        //user = new User();
+        private IConfiguration _configuration;
 
-        if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+        public static User user = new User();
+
+        public AuthController(SignupContext context, IConfiguration configuration)
         {
-            return Conflict("email already exists.");
+            _context = context;
+            _configuration = configuration;
         }
 
-      /*  CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-
-        user.PasswordHash = passwordHash;
-        user.PasswordSalt = passwordSalt;
-        user.Username = model.Username;
-        user.Mobileno = model.Mobileno;
-      
-        user.Email = model.Email;*/
-
-
-
-
-
-
-        //string[] emailParts = model.Email.Split('@');
-        int roleid;
-        if (model.Email == "srikanth@smbxl.com")
+        [HttpPost("signUp")]
+        public async Task<IActionResult> Signup(User1 model)
         {
-            var record = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
-             roleid = record.roleId;
+            var user = new User();
+
+            if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+            {
+                return Conflict("email already exists.");
+            }
+
+            CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.Username = model.Username;
+            user.Mobileno = model.Mobileno;
+
+            user.Email = model.Email;
+
+
+
+
+
+
+            //string[] emailParts = model.Email.Split('@');
+            int roleid;
+            if (model.Email == "srikanth@smbxl.com" || model.Email == "admin@smbxl.com")
+            {
+                var record = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
+                roleid = record.roleId;
+            }
+
+            else if (model.Email == "hr@smbxl.com")
+            {
+                var record = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
+                roleid = record.roleId;
+            }
+            else
+            {
+                var record = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
+                roleid = record.roleId;
+            }
+
+            user.roleId = roleid;
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
-        else if (model.Email == "hr@smbxl.com")
+       
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login(Login request)
         {
-            var record = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
-             roleid = record.roleId;
-        }
-        else 
-        {
-            var record = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
-            roleid = record.roleId;
-        }
+            var email = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-        // Create a new user object and set its properties 
-       var user = new User
-         {
+            //evar user = new User();
 
-             Username = model.Username,
-             Password = model.Password, // You should hash the password securely before storing it.
-             Mobileno = model.Mobileno,
-             Email = model.Email,
-             roleId = roleid
-         };
-        user.roleId = roleid;
+            if (email == null)
+            {
+                return NotFound("User not found");
+            }
+            if (!VerifyPasswordHash(request.Password, email.PasswordHash, email.PasswordSalt))
+            {
+                return BadRequest("Wrong Password");
+            }
+            int roleid;
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+            if (request.Email == "srikanth@smbxl.com")
+            {
+                var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
+                roleid = record1.roleId;
+            }
+            else if (request.Email == "hr@smbxl.com")
+            {
+                var record1 = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
+                roleid = record1.roleId;
+            }
+            else
+            {
+                var record1 = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
+                roleid = record1.roleId;
+            }
 
-        return Ok();
-    }
+            string token = CreateToken(email);
+            var response = new
+            {
+                roleId = roleid,
+                userId = email.UserId,
+                tokenid = token
 
-     [HttpPost("login")]
-      public async Task<IActionResult> Loginuser(Login request)
-      {
-          var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-
-
-          if (user == null)
-          {
-              return NotFound("User not found");
-          }
+            };
+            return Ok(response);
 
 
-
-          if (user.Password != request.Password)
-          {
-              return BadRequest("Invalid password");
-          }
-         // string[] emailParts = request.Email.Split('@');
-          int roleid;
-
-          if (request.Email == "srikanth@smbxl.com")
-          {
-              var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
-              roleid = record1.roleId;
-          }
-          else if (request.Email == "hr@smbxl.com")
-          {
-              var record1 = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
-              roleid = record1.roleId;
-          }
-          else
-          {
-              var record1 = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
-              roleid = record1.roleId;
-          }
-
-          
-          var response = new
-          {
-              roleId = roleid,
-              userId = user.UserId,
-           
-
-          };
-          return Ok(response);
-      }
-
-   /* [HttpPost("login")]
-    public async Task<ActionResult<string>> Login(Login request)
-    {
-        var email = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-        var user = new User();
-
-        if (email== null)
-        {
-            return NotFound("User not found");
-        }
-        if(!VerifyPasswordHash(request.Password,email.PasswordHash,email.PasswordSalt)) 
-        {
-            return BadRequest("Wrong Password");
-        }
-        int roleid;
-
-        if (request.Email == "srikanth@smbxl.com")
-        {
-            var record1 = await _context.roles.Where(r => r.roleName == "Admin").FirstOrDefaultAsync();
-            roleid = record1.roleId;
-        }
-        else if (request.Email == "hr@smbxl.com")
-        {
-            var record1 = await _context.roles.Where(r => r.roleName == "Hr").FirstOrDefaultAsync();
-            roleid = record1.roleId;
-        }
-        else
-        {
-            var record1 = await _context.roles.Where(r => r.roleName == "User").FirstOrDefaultAsync();
-            roleid = record1.roleId;
         }
 
-        string token = CreateToken(email);
-        var response = new
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            roleId = roleid,
-            userId = email.UserId,
-            tokenid = token
-
-        };
-        return Ok(response);
-
-        
-    }
-
-   private void CreatePasswordHash(string password,out byte[] passwordHash, out byte[] passwordSalt)
-    {
-        using(var hmac = new HMACSHA512())
-        {
-            passwordSalt = hmac.Key;
-            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));  
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
         }
-    }
 
-    private bool VerifyPasswordHash(string password,  byte[] passwordHash, byte[] passwordSalt)
-    {
-        
-
-        using (var hmac = new HMACSHA512(passwordSalt))
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-           var computedHash=hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return computedHash.SequenceEqual(passwordHash);
-        }
-    }
 
-    private string CreateToken(User user)
-    {
-        try {
+
+            using (var hmac = new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }
+
+
+
+        private string CreateToken(User user)
+        {
             List<Claim> claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, user.Email)
-        };
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("AppSettings:Token").Value));
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+            };
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddHours(24),
-                signingCredentials: cred);
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: cred
+                );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
             return jwt;
         }
-        catch (Exception a) { }
-        return null;
 
 
-       
-
-    }*/
-
-
+    }
 }
-
-
-
-
 
 
 
