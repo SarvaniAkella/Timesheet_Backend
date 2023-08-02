@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Crypto;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -44,6 +46,7 @@ namespace TimeSheet_Backend.Controllers
             {
                 return Conflict("email already exists.");
             }
+            var verificationToken = GenerateRandomString();
 
             CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -52,9 +55,9 @@ namespace TimeSheet_Backend.Controllers
             user.PasswordSalt = passwordSalt;
             user.Username = model.Username;
             user.Mobileno = model.Mobileno;
-
+            user.VerificationToken = verificationToken;
             user.Email = model.Email;
-
+            user.IsVerified = false;
 
 
 
@@ -82,11 +85,32 @@ namespace TimeSheet_Backend.Controllers
             user.roleId = roleid;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-
-            return Ok();
+            await _emailService.SendVerificationEmailAsync(model.Email, verificationToken);
+            return Ok("Verification Otp is sent to mail");
         }
 
-       
+        [HttpPost("verify")]
+        public async Task<ActionResult> Verify(string email, string token)
+        {
+            // Find the user with the provided email and verification token
+            var user = await _context.Users.FirstOrDefaultAsync(r => r.Email == email && r.VerificationToken == token);
+
+            if (user == null)
+            {
+                return BadRequest("Invalid verification token or email");
+            }
+
+            // Mark the user as verified in the database
+            user.IsVerified = true;
+            user.VerificationToken = null;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            // You can return a success message or redirect the user to a success page after verification.
+            return Ok("Email verification successful.");
+        }
+
+
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(Login request)
         {
@@ -123,12 +147,10 @@ namespace TimeSheet_Backend.Controllers
             {
                 return BadRequest("no user found");
             }
-            string tok = GenerateOtp();
-            userdt.PasswordToken = tok;
+            string token = GenerateOtp();
+            userdt.PasswordToken = token;
             await _context.SaveChangesAsync();
             await _emailService.SendOtpVerificationEmailAsync(userdt.Email, userdt.PasswordToken);
-
-
 
             return Ok("Verification Otp is sent to mail");
 
@@ -191,6 +213,22 @@ namespace TimeSheet_Backend.Controllers
             }
 
 
+
+            return new string(chars);
+        }
+
+        public static string GenerateRandomString()
+        {
+            const string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const int length = 6;
+
+            Random random = new Random();
+            char[] chars = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                chars[i] = allowedChars[random.Next(0, allowedChars.Length)];
+            }
 
             return new string(chars);
         }
