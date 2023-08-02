@@ -43,7 +43,7 @@ namespace TimeSheet_Backend.Services
 
                     using (var client = new SmtpClient())
                     {
-                        client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                        client.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
                         client.Authenticate("sarvania@smbxl.com", "rxkndtxjmpvtdgjj");
 
 
