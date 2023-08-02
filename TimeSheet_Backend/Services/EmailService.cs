@@ -3,10 +3,6 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 
-
-
-
-
 namespace TimeSheet_Backend.Services
 {
     public class emailService
@@ -26,7 +22,7 @@ namespace TimeSheet_Backend.Services
                 try
                 {
                     var message = new MimeMessage();
-                    message.From.Add(MailboxAddress.Parse("vk4808606@gmail.com"));
+                    message.From.Add(MailboxAddress.Parse("sarvania@smbxl.com"));
                     message.To.Add(MailboxAddress.Parse(email));
                     message.Subject = "Account Verification";
 
@@ -51,8 +47,8 @@ namespace TimeSheet_Backend.Services
 
                     using (var client = new SmtpClient())
                     {
-                        client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                        client.Authenticate("vk4808606@gmail.com", "xktqxpirwzxacqfz");
+                        client.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
+                        client.Authenticate("sarvania@smbxl.com", "rxkndtxjmpvtdgjj");
 
 
 

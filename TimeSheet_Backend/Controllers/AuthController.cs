@@ -139,7 +139,7 @@ namespace TimeSheet_Backend.Controllers
 
 
         }
-        [HttpPost("ForgotPassword")]
+        [HttpPost("forgotPassword")]
         public async Task<ActionResult> ForgotPassword(string email)
         {
             var userdt = await _context.Users.FirstOrDefaultAsync(r => r.Email == email);
@@ -157,8 +157,20 @@ namespace TimeSheet_Backend.Controllers
 
 
         }
-        [HttpPost("ResetPassword")]
-        public async Task<ActionResult> ResetPassword(ForgotPasswordDto forgot)
+
+        [HttpPost("verifyToken")]
+        public async Task<ActionResult> VerifyToken(ForgotPasswordDto forgot)
+        {
+            var userdt = await _context.Users.FirstOrDefaultAsync(r => r.Email == forgot.Email);
+            if (forgot.Token != userdt.PasswordToken)
+            {
+                return BadRequest("Invalid Token");
+            }
+            return Ok();
+        }
+
+        [HttpPost("resetPassword")]
+        public async Task<ActionResult> ResetPassword(ResetPasswordDto forgot)
         {
             var userdt = await _context.Users.FirstOrDefaultAsync(r => r.Email == forgot.Email);
 
@@ -172,10 +184,6 @@ namespace TimeSheet_Backend.Controllers
             if (forgot.ConfirmPassword == null)
             {
                 return BadRequest("Please Enter the password");
-            }
-            if (forgot.Token != userdt.PasswordToken)
-            {
-                return BadRequest("Invalid Token");
             }
             CreatePasswordHash(forgot.ConfirmPassword, out byte[] passwordHash, out byte[] passworSalt);
        
