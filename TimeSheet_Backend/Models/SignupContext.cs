@@ -17,6 +17,9 @@ namespace TimeSheet_Backend.Models
         public DbSet<Activity> Activities { get; set; }
         public DbSet<TimeSheet> TimeSheets { get; set; }
         public DbSet<role> roles { get; set; }
+        
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

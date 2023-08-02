@@ -14,7 +14,15 @@ namespace TimeSheet_Backend.Models
         public string Email { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
-   
+       // public bool IsVerified { get; set; }
+
+
+
+       // public string? VerificationToken { get; set; }
+       // public bool IsOtpVerified { get; set; }
+       // public string? OtpVerificationToken { get; set; }*/
+
+        public string? PasswordToken { get; set; }
         public string Mobileno { get; set; }
 
         public int roleId { get; set; }

@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "G:\\project\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj": {}
+    "D:\\project1\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj": {}
   },
   "projects": {
-    "G:\\project\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj": {
+    "D:\\project1\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\project\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj",
+        "projectUniqueName": "D:\\project1\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj",
         "projectName": "TimeSheet_Backend",
-        "projectPath": "G:\\project\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj",
-        "packagesPath": "C:\\Users\\Aakella Sarvani\\.nuget\\packages\\",
-        "outputPath": "G:\\project\\Timesheet_Backend\\TimeSheet_Backend\\obj\\",
+        "projectPath": "D:\\project1\\Timesheet_Backend\\TimeSheet_Backend\\TimeSheet_Backend.csproj",
+        "packagesPath": "C:\\Users\\SARVANI\\.nuget\\packages\\",
+        "outputPath": "D:\\project1\\Timesheet_Backend\\TimeSheet_Backend\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Aakella Sarvani\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\SARVANI\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,7 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.304\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -41,6 +45,14 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "MailKit-On-NETCore": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
             "Microsoft.AspNet.WebApi.Core": {
               "target": "Package",
               "version": "[5.2.9, )"
@@ -66,6 +78,14 @@
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
               "version": "[6.32.0, )"
+            },
+            "NETCore.MailKit": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[110.2.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -99,7 +119,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
         }
       }
     }

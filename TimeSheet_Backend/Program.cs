@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using static TimeSheet_Backend.Services.emailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,9 @@ builder.Services.AddDbContext<SignupContext>(
     );
 
 
+builder.Services.AddSingleton<IEmailService, EmailService>();
+
+
 
 var app = builder.Build();
 
@@ -71,7 +75,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors("AllowOrigin");
 app.MapControllers();
 
 app.Run();
