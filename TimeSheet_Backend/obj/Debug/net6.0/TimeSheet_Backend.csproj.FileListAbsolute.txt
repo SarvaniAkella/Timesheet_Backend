@@ -380,3 +380,4 @@ D:\project1\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\NETCore.MailKit
 D:\project1\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\BouncyCastle.Crypto.dll
 D:\project1\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\BCrypt.Net-Next.dll
 D:\project1\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\RestSharp.dll
+D:\project1\Timesheet_Backend\TimeSheet_Backend\bin\Debug\net6.0\DinkToPdf.dll

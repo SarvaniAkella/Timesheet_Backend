@@ -276,5 +276,36 @@ namespace TimeSheet_Backend.Controllers
 
             return Ok("Project added successfully");
         }
+        [HttpGet("getUserDataForOneMonth")]
+        public async Task<ActionResult<TimeSheetDTO>> GetTimesheetsForOneMonth(int userid, [FromQuery] DateTime inputDate)
+        {
+
+
+            // Calculate the end date as one week from the start date
+            DateTime date1 = new DateTime(inputDate.Year, inputDate.Month, 01);
+            DateTime date2 = new DateTime(inputDate.Year, inputDate.Month, 31);
+
+            // Fetch timesheet records for the specified user and within the date range
+            //List<TimeSheet> timesheets = _context.TimeSheets
+            var timeSheetData = await _context.TimeSheets
+                        .Join(_context.Users, t => t.UserId, u => u.UserId, (t, u) => new { t, u })
+                        .Join(_context.Projects, tu => tu.t.ProjectId, p => p.ProjectId, (tu, p) => new { tu.t, tu.u, p })
+                        .Join(_context.Activities, tup => tup.t.ActivityId, a => a.ActivityId, (tup, a) => new
+                        {
+                            tup.t.TimeSheetId,
+                            tup.p.ProjectName,
+                            a.ActivityName,
+                            tup.u.Username,
+                            tup.u.UserId,
+                            tup.t.task,
+                            tup.t.hours,
+                            tup.t.CreatedDate
+                        })
+                .Where(t => t.CreatedDate.Date >= date1.Date && t.CreatedDate.Date <= date2.Date && t.UserId == userid)
+                .ToListAsync();
+
+            return Ok(timeSheetData);
+
+        }
     }
 }

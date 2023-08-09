@@ -6,6 +6,8 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using static TimeSheet_Backend.Services.emailService;
+using DinkToPdf.Contracts;
+using DinkToPdf;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:5173")
+        builder.WithOrigins("http://localhost:5174")
                .AllowAnyHeader()
                .AllowAnyMethod();
     });
@@ -64,6 +66,8 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 
 
 var app = builder.Build();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
