@@ -34,6 +34,9 @@ namespace TimeSheet_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
                     b.HasKey("ActivityId");
 
                     b.ToTable("Activities");
@@ -42,57 +45,68 @@ namespace TimeSheet_Backend.Migrations
                         new
                         {
                             ActivityId = 1,
-                            ActivityName = "Unit Testing"
+                            ActivityName = "Unit Testing",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 2,
-                            ActivityName = "Acceptance Testing"
+                            ActivityName = "Acceptance Testing",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 3,
-                            ActivityName = "Warranty/MC"
+                            ActivityName = "Warranty/MC",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 4,
-                            ActivityName = "System Testing"
+                            ActivityName = "System Testing",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 5,
-                            ActivityName = "Coding/Implementation"
+                            ActivityName = "Coding/Implementation",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 6,
-                            ActivityName = "Design"
+                            ActivityName = "Design",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 7,
-                            ActivityName = "Support"
+                            ActivityName = "Support",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 8,
-                            ActivityName = "Integration Testing"
+                            ActivityName = "Integration Testing",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 9,
-                            ActivityName = "Requirements Development"
+                            ActivityName = "Requirements Development",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 10,
-                            ActivityName = "Planning"
+                            ActivityName = "Planning",
+                            ProjectId = 0
                         },
                         new
                         {
                             ActivityId = 11,
-                            ActivityName = "PTO"
+                            ActivityName = "PTO",
+                            ProjectId = 0
                         });
                 });
 
@@ -104,11 +118,16 @@ namespace TimeSheet_Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
 
+                    b.Property<int?>("ActivityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProjectId");
+
+                    b.HasIndex("ActivityId");
 
                     b.ToTable("Projects");
 
@@ -272,6 +291,13 @@ namespace TimeSheet_Backend.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TimeSheet_Backend.Models.Project", b =>
+                {
+                    b.HasOne("TimeSheet_Backend.Models.Activity", null)
+                        .WithMany("Projects")
+                        .HasForeignKey("ActivityId");
+                });
+
             modelBuilder.Entity("TimeSheet_Backend.Models.TimeSheet", b =>
                 {
                     b.HasOne("TimeSheet_Backend.Models.Activity", "Activity")
@@ -301,6 +327,8 @@ namespace TimeSheet_Backend.Migrations
 
             modelBuilder.Entity("TimeSheet_Backend.Models.Activity", b =>
                 {
+                    b.Navigation("Projects");
+
                     b.Navigation("TimeSheets");
                 });
 

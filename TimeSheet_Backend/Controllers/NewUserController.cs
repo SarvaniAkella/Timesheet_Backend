@@ -40,8 +40,10 @@ namespace TimeSheet_Backend.Controllers
         {
             // Query the Activities table and fetch ActivityId and ActivityName using Entity Framework
             var activities = await _context.Activities
-                .Select(a => new ActivityDTO { ActivityId = a.ActivityId, ActivityName = a.ActivityName })
+                .Select(a => new ActivityDTO { ProjectId = a.ProjectId, ActivityId = a.ActivityId, ActivityName = a.ActivityName })
                 .ToListAsync();
+
+
 
             // Return the list of activities
             return Ok(activities);

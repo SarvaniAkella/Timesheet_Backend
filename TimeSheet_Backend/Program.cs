@@ -15,13 +15,14 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowOrigin", builder =>
+    options.AddPolicy("AllowLocalhost5174", builder =>
     {
-        builder.WithOrigins("http://localhost:5173")
+        builder.WithOrigins("http://192.168.1.2:5174", "http://192.168.200.2:5174") 
                .AllowAnyHeader()
                .AllowAnyMethod();
     });
 });
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -33,8 +34,6 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
-
-
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
@@ -49,19 +48,15 @@ builder.Services.AddAuthentication(
             ValidateIssuer = false,
             ValidateAudience = false,
         };
-
     });
+
 builder.Services.AddDbContext<SignupContext>(
     options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("SignupCS"));
-    }
-    );
-
+    });
 
 builder.Services.AddSingleton<IEmailService, EmailService>();
-
-
 
 var app = builder.Build();
 
@@ -71,11 +66,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowOrigin");
+app.UseCors("AllowLocalhost5174");
 app.MapControllers();
-
+app.UseStaticFiles();
 app.Run();

@@ -28,15 +28,22 @@ namespace TimeSheet_Backend.Controllers
             return Ok(projects);
         }
         [HttpGet("getAllActivities")]
-        public async Task<ActionResult<List<ActivityDTO>>> GetAllActivities()
+        public async Task<ActionResult<List<ActivityDTO>>> GetAllActivities(int projectId)
         {
             // Query the Activities table and fetch ActivityId and ActivityName using Entity Framework
-            var activities = await _context.Activities
-                .Select(a => new ActivityDTO { ActivityId = a.ActivityId, ActivityName = a.ActivityName })
-                .ToListAsync();
+            var result = _context.Activities
+         .Join(_context.Projects,
+             act => act.ProjectId,
+             proj => proj.ProjectId,
+             (act, proj) => new { Activity = act, Project = proj })
+         .Where(joinResult => joinResult.Activity.ProjectId == projectId)
+         .Select(joinResult => joinResult.Activity)
+         .ToList();
+
+
 
             // Return the list of activities
-            return Ok(activities);
+            return Ok(result);
         }
 
         [HttpGet("getAllUsers")]
@@ -257,12 +264,12 @@ namespace TimeSheet_Backend.Controllers
         public async Task<IActionResult> AddActivity(Activity1 request)
 
         {
-           
+
 
             var newActivity = new Activity
             {
-                ActivityName = request.ActivityName
-
+                ActivityName = request.ActivityName,
+                ProjectId = request.ProjectId
 
                 // You can add more properties here as needed
             };

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>D:\publishedTimeSheetApi</_PublishTargetUrl>
+    <History>True|2023-08-04T04:53:01.1783616Z;False|2023-08-04T10:22:31.0457952+05:30;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="SignupCS">
+      <Value>server=PERSONA-HYD-HV1\SQLEXPRESS %3b database=SMBXL-INTERNALPORTAL-DEV%3b Integrated Security=False%3b MultipleActiveResultSets=true%3b TrustServerCertificate=True%3b User ID = test%3b Password = test123</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>
