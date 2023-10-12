@@ -114,7 +114,7 @@ namespace TimeSheet_Backend.Controllers
             public string ActivityName { get; set; }
             public string Username { get; set; }
             public string Task { get; set; }
-            public int HoursWorked { get; set; }
+            public float HoursWorked { get; set; }
             public DateTime Date { get; set; }
         }
         [HttpDelete("deleteUserTimesheetByTimesheetId")]

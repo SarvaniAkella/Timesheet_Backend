@@ -9,7 +9,7 @@ namespace TimeSheet_Backend.Models
         public int TimeSheetId { get; set; }
        
         public string task { get; set; }
-        public int hours { get; set; }
+        public float hours { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime CreatedDate { get; set;}

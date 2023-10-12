@@ -261,7 +261,7 @@ namespace TimeSheet_Backend.Controllers
             {
                 return NotFound();
             }
-            int totalHoursWorked = 0;
+            float totalHoursWorked = 0;
             
             foreach (var t in userRecords)
             {
