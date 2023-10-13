@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TimeSheet_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class one : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,24 +19,12 @@ namespace TimeSheet_Backend.Migrations
                 {
                     ActivityId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ActivityName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ActivityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Activities", x => x.ActivityId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Projects",
-                columns: table => new
-                {
-                    ProjectId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Projects", x => x.ProjectId);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,11 +48,7 @@ namespace TimeSheet_Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    VerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UniqueId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mobileno = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     roleId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -74,13 +58,32 @@ namespace TimeSheet_Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActivityId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.ProjectId);
+                    table.ForeignKey(
+                        name: "FK_Projects_Activities_ActivityId",
+                        column: x => x.ActivityId,
+                        principalTable: "Activities",
+                        principalColumn: "ActivityId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TimeSheets",
                 columns: table => new
                 {
                     TimeSheetId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     task = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    hours = table.Column<int>(type: "int", nullable: false),
+                    hours = table.Column<float>(type: "real", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "date", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -111,35 +114,35 @@ namespace TimeSheet_Backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Activities",
-                columns: new[] { "ActivityId", "ActivityName" },
+                columns: new[] { "ActivityId", "ActivityName", "ProjectId" },
                 values: new object[,]
                 {
-                    { 1, "Unit Testing" },
-                    { 2, "Acceptance Testing" },
-                    { 3, "Warranty/MC" },
-                    { 4, "System Testing" },
-                    { 5, "Coding/Implementation" },
-                    { 6, "Design" },
-                    { 7, "Support" },
-                    { 8, "Integration Testing" },
-                    { 9, "Requirements Development" },
-                    { 10, "Planning" },
-                    { 11, "PTO" }
+                    { 1, "Unit Testing", 0 },
+                    { 2, "Acceptance Testing", 0 },
+                    { 3, "Warranty/MC", 0 },
+                    { 4, "System Testing", 0 },
+                    { 5, "Coding/Implementation", 0 },
+                    { 6, "Design", 0 },
+                    { 7, "Support", 0 },
+                    { 8, "Integration Testing", 0 },
+                    { 9, "Requirements Development", 0 },
+                    { 10, "Planning", 0 },
+                    { 11, "PTO", 0 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Projects",
-                columns: new[] { "ProjectId", "ProjectName" },
+                columns: new[] { "ProjectId", "ActivityId", "ProjectName" },
                 values: new object[,]
                 {
-                    { 1, "Persona Nutrition" },
-                    { 2, "Puritains" },
-                    { 3, "Nestle Health Sciences" },
-                    { 4, "Market Central" },
-                    { 5, "Family Central" },
-                    { 6, "Internal POC" },
-                    { 7, "External POC" },
-                    { 8, "Marketing & Sales" }
+                    { 1, null, "Persona Nutrition" },
+                    { 2, null, "Puritains" },
+                    { 3, null, "Nestle Health Sciences" },
+                    { 4, null, "Market Central" },
+                    { 5, null, "Family Central" },
+                    { 6, null, "Internal POC" },
+                    { 7, null, "External POC" },
+                    { 8, null, "Marketing & Sales" }
                 });
 
             migrationBuilder.InsertData(
@@ -151,6 +154,11 @@ namespace TimeSheet_Backend.Migrations
                     { 2, "Hr" },
                     { 3, "Admin" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_ActivityId",
+                table: "Projects",
+                column: "ActivityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimeSheets_ActivityId",
@@ -178,13 +186,13 @@ namespace TimeSheet_Backend.Migrations
                 name: "TimeSheets");
 
             migrationBuilder.DropTable(
-                name: "Activities");
-
-            migrationBuilder.DropTable(
                 name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Activities");
         }
     }
 }

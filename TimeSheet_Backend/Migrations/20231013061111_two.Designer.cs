@@ -12,8 +12,8 @@ using TimeSheet_Backend.Models;
 namespace TimeSheet_Backend.Migrations
 {
     [DbContext(typeof(SignupContext))]
-    [Migration("20231011072019_new09")]
-    partial class new09
+    [Migration("20231013061111_two")]
+    partial class two
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -197,8 +197,8 @@ namespace TimeSheet_Backend.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("hours")
-                        .HasColumnType("int");
+                    b.Property<float>("hours")
+                        .HasColumnType("real");
 
                     b.Property<string>("task")
                         .IsRequired()
@@ -227,29 +227,12 @@ namespace TimeSheet_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Mobileno")
+                    b.Property<string>("UniqueId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("PasswordToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VerificationToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("roleId")

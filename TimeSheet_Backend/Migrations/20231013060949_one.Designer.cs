@@ -12,7 +12,7 @@ using TimeSheet_Backend.Models;
 namespace TimeSheet_Backend.Migrations
 {
     [DbContext(typeof(SignupContext))]
-    [Migration("20231012102150_one")]
+    [Migration("20231013060949_one")]
     partial class one
     {
         /// <inheritdoc />
@@ -227,29 +227,16 @@ namespace TimeSheet_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Mobileno")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("PasswordHash")
+                    b.Property<string>("UniqueId")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("PasswordToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VerificationToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("roleId")

@@ -24,7 +24,7 @@ namespace TimeSheet_Backend.Models
        // public string? OtpVerificationToken { get; set; }*/
 
        // public string? PasswordToken { get; set; }
-        public string Mobileno { get; set; }
+      //  public string Mobileno { get; set; }
 
         public int roleId { get; set; }
         public List<TimeSheet> TimeSheets { get; set; }

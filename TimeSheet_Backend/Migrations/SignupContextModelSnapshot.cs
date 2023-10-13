@@ -224,10 +224,6 @@ namespace TimeSheet_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Mobileno")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UniqueId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
