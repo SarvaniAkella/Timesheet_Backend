@@ -54,7 +54,7 @@ namespace TimeSheet_Backend.Controllers
           //  user.PasswordHash = passwordHash;
           //  user.PasswordSalt = passwordSalt;
             user.Username = model.Username;
-            user.Mobileno = model.Mobileno;
+           // user.Mobileno = model.Mobileno;
             user.UniqueId = model.UniqueId;
            // user.VerificationToken = verificationToken;
             user.Email = model.Email;
