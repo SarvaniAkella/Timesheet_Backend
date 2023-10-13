@@ -46,18 +46,19 @@ namespace TimeSheet_Backend.Controllers
             {
                 return Conflict("email already exists.");
             }
-            var verificationToken = GenerateRandomString();
+       //     var verificationToken = GenerateRandomString();
 
-            CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
+         //   CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
 
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
+          //  user.PasswordHash = passwordHash;
+          //  user.PasswordSalt = passwordSalt;
             user.Username = model.Username;
             user.Mobileno = model.Mobileno;
-            user.VerificationToken = verificationToken;
+            user.UniqueId = model.UniqueId;
+           // user.VerificationToken = verificationToken;
             user.Email = model.Email;
-            user.IsVerified = false;
+          //  user.IsVerified = false;
 
 
 
@@ -84,37 +85,54 @@ namespace TimeSheet_Backend.Controllers
 
             user.roleId = roleid;
             _context.Users.Add(user);
+            string token = CreateToken(user);
             await _context.SaveChangesAsync();
-            await _emailService.SendVerificationEmailAsync(model.Email, verificationToken);
-            return Ok("Verification Otp is sent to mail");
+          //  await _emailService.SendVerificationEmailAsync(model.Email, verificationToken);
+            return Ok(token);
         }
 
-        [HttpPost("verify")]
-        public async Task<ActionResult> Verify(string email, string token)
+        [HttpGet("isEmailExists")]
+        public async Task<ActionResult<string>> IsEmailExists(string email)
         {
-            // Find the user with the provided email and verification token
-            var user = await _context.Users.FirstOrDefaultAsync(r => r.Email == email && r.VerificationToken == token);
+            var user = new User();
 
-            if (user == null)
+            if (await _context.Users.AnyAsync(u => u.Email == email))
             {
-                return BadRequest("Invalid verification token or email");
+                return Ok("email already exists.");
             }
 
-            // Mark the user as verified in the database
-            user.IsVerified = true;
-            user.VerificationToken = null;
-            _context.Update(user);
-            await _context.SaveChangesAsync();
 
-            // You can return a success message or redirect the user to a success page after verification.
-            return Ok("Email verification successful.");
+
+            return Ok("Email doesn't exist");
+
         }
+
+        /*    [HttpPost("verify")]
+            public async Task<ActionResult> Verify(string email, string token)
+            {
+                // Find the user with the provided email and verification token
+                var user = await _context.Users.FirstOrDefaultAsync(r => r.Email == email && r.VerificationToken == token);
+
+                if (user == null)
+                {
+                    return BadRequest("Invalid verification token or email");
+                }
+
+                // Mark the user as verified in the database
+                user.IsVerified = true;
+                user.VerificationToken = null;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+                // You can return a success message or redirect the user to a success page after verification.
+                return Ok("Email verification successful.");
+            }*/
 
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(Login request)
         {
-            var email = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var email = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email && u.UniqueId==request.UniqueId);
 
             //evar user = new User();
 
@@ -122,11 +140,11 @@ namespace TimeSheet_Backend.Controllers
             {
                 return NotFound("User not found");
             }
-            if (!VerifyPasswordHash(request.Password, email.PasswordHash, email.PasswordSalt))
-            {
-                return BadRequest("Wrong Password");
+           // if (!VerifyPasswordHash(request.Password, email.PasswordHash, email.PasswordSalt))
+           // {
+           //     return BadRequest("Wrong Password");
 
-            }
+           // }
             string token = CreateToken(email);
             var response = new
             {
@@ -139,7 +157,7 @@ namespace TimeSheet_Backend.Controllers
 
 
         }
-        [HttpPost("forgotPassword")]
+      /*  [HttpPost("forgotPassword")]
         public async Task<ActionResult> ForgotPassword(string email)
         {
             var userdt = await _context.Users.FirstOrDefaultAsync(r => r.Email == email);
@@ -260,7 +278,7 @@ namespace TimeSheet_Backend.Controllers
                 return computedHash.SequenceEqual(passwordHash);
             }
         }
-
+      */
 
 
         private string CreateToken(User user)
