@@ -15,9 +15,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost5174", builder =>
+    options.AddPolicy("AllowLocalhost443", builder =>
     {
-        builder.WithOrigins("http://192.168.1.2:5174", "http://192.168.200.2:5174") 
+        builder.WithOrigins("https://internalportal.smbxl.com/") 
                .AllowAnyHeader()
                .AllowAnyMethod();
     });
@@ -72,7 +72,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowLocalhost5174");
+app.UseCors("AllowLocalhost443");
 app.MapControllers();
 app.UseStaticFiles();
 app.Run();

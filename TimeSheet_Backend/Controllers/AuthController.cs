@@ -87,8 +87,15 @@ namespace TimeSheet_Backend.Controllers
             _context.Users.Add(user);
             string token = CreateToken(user);
             await _context.SaveChangesAsync();
-          //  await _emailService.SendVerificationEmailAsync(model.Email, verificationToken);
-            return Ok(token);
+            //  await _emailService.SendVerificationEmailAsync(model.Email, verificationToken);
+            var response = new
+            {
+                roleId = user.roleId,
+                userId = user.UserId,
+                tokenid = token
+
+            };
+            return Ok(response);
         }
 
         [HttpGet("isEmailExists")]

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Controller_SelectedScaffolderID>ApiControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
-    <NameOfLastUsedPublishProfile>D:\SMBXL_TIMESHEET\Timesheet_Backend\TimeSheet_Backend\Properties\PublishProfiles\FolderProfile7.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\SMBXL_TIMESHEET\NEW_API\Timesheet_Backend\TimeSheet_Backend\Properties\PublishProfiles\FolderProfile8.pubxml</NameOfLastUsedPublishProfile>
     <ActiveDebugProfile>TimeSheet_Backend</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

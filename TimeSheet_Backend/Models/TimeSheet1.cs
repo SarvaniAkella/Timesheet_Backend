@@ -6,7 +6,7 @@ namespace TimeSheet_Backend.Models
     public class TimeSheet1
     {
         public string task { get; set; }
-        public int hours { get; set; }
+        public float hours { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime CreatedDate { get; set; }
