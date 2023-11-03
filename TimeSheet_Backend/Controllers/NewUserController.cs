@@ -238,7 +238,7 @@ namespace TimeSheet_Backend.Controllers
                               tup.t.CreatedDate
                           })
 
-                            .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date < endDate.Date)
+                            .Where(t => t.CreatedDate.Date >= startDate.Date && t.CreatedDate.Date <= endDate.Date)
                             .ToListAsync();
 
             return Ok(userRecords);

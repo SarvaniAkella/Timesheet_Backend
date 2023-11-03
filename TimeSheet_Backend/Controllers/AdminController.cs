@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TimeSheet_Backend.Models;
-
 namespace TimeSheet_Backend.Controllers
 {
-
-  [Route("[controller]")]
+    [Authorize]
+    [Route("[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
